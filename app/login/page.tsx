@@ -17,13 +17,13 @@ import { useAuth } from '@/lib/auth-context';
 
 function LoginForm() {
   const router = useRouter();
-  const { user, login, theme, toggleTheme } = useAuth();
+  const { user, loading: authLoading, login, theme, toggleTheme } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (!authLoading && user) {
       router.replace(user.role === 'ADMIN' ? '/admin' : '/portal');
     }
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');

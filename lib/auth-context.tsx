@@ -92,11 +92,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(JSON.parse(savedUser));
       } catch (e) {
         console.error('Failed to parse saved user', e);
+        setUser(null);
+        localStorage.removeItem('vortex_user');
       }
     } else {
-      // Default initial session is Admin for quick preview
-      setUser(DEMO_ADMIN);
-      localStorage.setItem('vortex_user', JSON.stringify(DEMO_ADMIN));
+      setUser(null);
     }
 
     // Restore theme
