@@ -1,0 +1,1345 @@
+{
+  "users": [
+    {
+      "id": "user_admin",
+      "role": "ADMIN",
+      "name": "Sourav Roy (Creative Director)",
+      "email": "admin@studiovortex.com",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+      "twoFactorEnabled": false
+    },
+    {
+      "id": "user_client_1",
+      "role": "CLIENT",
+      "name": "Alex Rivers",
+      "email": "alex@zenithtech.io",
+      "clientId": "CL-2026-0042",
+      "companyName": "Zenith Techworks",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+      "mustChangePassword": false
+    },
+    {
+      "id": "user_client_2",
+      "role": "CLIENT",
+      "name": "Priya Sharma",
+      "email": "priya@luminafashion.in",
+      "clientId": "CL-2026-0089",
+      "companyName": "Lumina Fashion Studio",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+      "mustChangePassword": false
+    },
+    {
+      "id": "user_client_3",
+      "role": "CLIENT",
+      "name": "Marcus Vance",
+      "email": "marcus@pulseenergy.com",
+      "clientId": "CL-2026-0104",
+      "companyName": "Pulse Energy Drink",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+      "mustChangePassword": false
+    }
+  ],
+  "clients": [
+    {
+      "id": "client_1",
+      "clientId": "CL-2026-0042",
+      "name": "Alex Rivers",
+      "companyName": "Zenith Techworks",
+      "logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80",
+      "email": "alex@zenithtech.io",
+      "phone": "+91 99887 76655",
+      "whatsapp": "+91 99887 76655",
+      "address": "Tech Park Tower 3, Outer Ring Rd, Bellandur, Bengaluru",
+      "gstin": "29AABCT1334M1Z8",
+      "industry": "SaaS & Enterprise Tech",
+      "source": "Website",
+      "notes": "Monthly retainer client. High expectations on turnaround for product launch graphics.",
+      "tags": [
+        "Retainer",
+        "VIP"
+      ],
+      "dateAdded": "2026-01-15",
+      "lastLogin": "2026-11-10 13:49",
+      "status": "Active",
+      "tempPassword": "zenith2026"
+    },
+    {
+      "id": "client_2",
+      "clientId": "CL-2026-0089",
+      "name": "Priya Sharma",
+      "companyName": "Lumina Fashion Studio",
+      "logo": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=150&auto=format&fit=crop&q=80",
+      "email": "priya@luminafashion.in",
+      "phone": "+91 98450 11223",
+      "whatsapp": "+91 98450 11223",
+      "address": "Boutique Row, Bandra West, Mumbai, MH 400050",
+      "gstin": "27AALCL9876R1ZO",
+      "industry": "Luxury Fashion & Apparel",
+      "source": "Instagram",
+      "notes": "Seasonal campaign client for Autumn/Winter 2026 collection video edits and lookbooks.",
+      "tags": [
+        "VIP",
+        "High-Priority"
+      ],
+      "dateAdded": "2026-03-02",
+      "lastLogin": "2026-11-09 18:40",
+      "status": "Active",
+      "tempPassword": "lumina2026"
+    },
+    {
+      "id": "client_3",
+      "clientId": "CL-2026-0104",
+      "name": "Marcus Vance",
+      "companyName": "Pulse Energy Drink",
+      "logo": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=150&auto=format&fit=crop&q=80",
+      "email": "marcus@pulseenergy.com",
+      "phone": "+91 97110 33445",
+      "whatsapp": "+91 97110 33445",
+      "address": "Cyber Hub, DLF Phase 2, Gurugram, HR 122002",
+      "gstin": "06AACCP5566K1ZT",
+      "industry": "FMCG & Energy Beverages",
+      "source": "Referral",
+      "notes": "Needs 3D motion graphics for can reveals and dynamic Instagram Reels.",
+      "tags": [
+        "Retainer"
+      ],
+      "dateAdded": "2026-06-20",
+      "lastLogin": "2026-11-10 13:58",
+      "status": "Active",
+      "tempPassword": "pulse2026"
+    },
+    {
+      "id": "client_4",
+      "clientId": "CL-2026-0112",
+      "name": "Nathan Drake",
+      "companyName": "Hyperion Esports",
+      "logo": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=150&auto=format&fit=crop&q=80",
+      "email": "nathan@hyperionesports.gg",
+      "phone": "+91 91234 56789",
+      "whatsapp": "+91 91234 56789",
+      "address": "Koregaon Park, Pune, MH 411001",
+      "industry": "Gaming & Esports",
+      "source": "LinkedIn",
+      "notes": "Complete rebranding kit + twitch stream overlay motion graphics package.",
+      "tags": [
+        "One-time"
+      ],
+      "dateAdded": "2026-09-10",
+      "lastLogin": "2026-11-02 09:30",
+      "status": "Active",
+      "tempPassword": "hyperion2026"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_1",
+      "title": "SaaS Platform 2.0 Product Launch Video",
+      "clientId": "client_1",
+      "clientName": "Alex Rivers",
+      "clientCompany": "Zenith Techworks",
+      "type": "YouTube Video",
+      "description": "High-octane 90-second product keynote reveal video with 3D UI callouts, kinetic typography, and synthesized sound design.",
+      "referenceLinks": [
+        "https://linear.app/readme",
+        "https://stripe.com/press"
+      ],
+      "startDate": "2026-11-01",
+      "deadline": "2026-11-18",
+      "status": "Draft Shared",
+      "priority": "High",
+      "revisionsAllowed": 3,
+      "revisionsUsed": 1,
+      "quotedAmount": 145000,
+      "currency": "INR",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Script & Storyboard alignment",
+          "completed": true
+        },
+        {
+          "id": "t2",
+          "title": "3D UI Mockup animations",
+          "completed": true
+        },
+        {
+          "id": "t3",
+          "title": "Draft v1 render & audio mix",
+          "completed": true
+        },
+        {
+          "id": "t4",
+          "title": "Client revision round 1",
+          "completed": false,
+          "dueDate": "2026-11-14"
+        },
+        {
+          "id": "t5",
+          "title": "Final 4K Master delivery",
+          "completed": false,
+          "dueDate": "2026-11-18"
+        }
+      ],
+      "createdAt": "2026-11-01T10:00:00Z",
+      "updatedAt": "2026-11-10T12:00:00Z"
+    },
+    {
+      "id": "proj_2",
+      "title": "Winter Glamour Campaign - 5x Reels & Lookbook",
+      "clientId": "client_2",
+      "clientName": "Priya Sharma",
+      "clientCompany": "Lumina Fashion Studio",
+      "type": "Reel / Short",
+      "description": "Fast-paced vertical reel edits (9:16) capturing runway backstage moments, color grading in warm cinematic tones, and digital lookbook spreads.",
+      "startDate": "2026-11-04",
+      "deadline": "2026-11-15",
+      "status": "Revisions",
+      "priority": "Urgent",
+      "revisionsAllowed": 4,
+      "revisionsUsed": 2,
+      "quotedAmount": 95000,
+      "currency": "INR",
+      "tasks": [
+        {
+          "id": "t6",
+          "title": "Raw footage ingest & log",
+          "completed": true
+        },
+        {
+          "id": "t7",
+          "title": "Rough cut for Reels 1 to 3",
+          "completed": true
+        },
+        {
+          "id": "t8",
+          "title": "Color grade & sound design",
+          "completed": true
+        },
+        {
+          "id": "t9",
+          "title": "Implement timestamped client feedback",
+          "completed": false,
+          "dueDate": "2026-11-12"
+        },
+        {
+          "id": "t10",
+          "title": "Export with clean audio master",
+          "completed": false,
+          "dueDate": "2026-11-15"
+        }
+      ],
+      "createdAt": "2026-11-04T09:30:00Z",
+      "updatedAt": "2026-11-10T11:20:00Z"
+    },
+    {
+      "id": "proj_3",
+      "title": "Pulse Neon Citrus 3D Motion Reveal",
+      "clientId": "client_3",
+      "clientName": "Marcus Vance",
+      "clientCompany": "Pulse Energy Drink",
+      "type": "Motion Graphics",
+      "description": "Electric 3D beverage can splash sequence with fluid simulations, neon glow aesthetics, and punchy bass drops for Instagram & billboards.",
+      "startDate": "2026-11-06",
+      "deadline": "2026-11-22",
+      "status": "In Progress",
+      "priority": "Medium",
+      "revisionsAllowed": 3,
+      "revisionsUsed": 0,
+      "quotedAmount": 180000,
+      "currency": "INR",
+      "tasks": [
+        {
+          "id": "t11",
+          "title": "Can 3D model & label UV unwrap",
+          "completed": true
+        },
+        {
+          "id": "t12",
+          "title": "Fluid particle simulation test",
+          "completed": true
+        },
+        {
+          "id": "t13",
+          "title": "Lighting setup & camera choreography",
+          "completed": false,
+          "dueDate": "2026-11-14"
+        },
+        {
+          "id": "t14",
+          "title": "Draft V1 render for review",
+          "completed": false,
+          "dueDate": "2026-11-18"
+        }
+      ],
+      "createdAt": "2026-11-06T14:15:00Z",
+      "updatedAt": "2026-11-09T16:00:00Z"
+    },
+    {
+      "id": "proj_4",
+      "title": "Hyperion Esports Complete Rebranding Kit",
+      "clientId": "client_4",
+      "clientName": "Nathan Drake",
+      "clientCompany": "Hyperion Esports",
+      "type": "Branding Kit",
+      "description": "Aggressive futuristic emblem, custom typography, team jersey mockups, Twitch overlays, and brand guideline document.",
+      "startDate": "2026-10-15",
+      "deadline": "2026-11-08",
+      "deliveryDate": "2026-11-08",
+      "status": "Approved",
+      "priority": "Medium",
+      "revisionsAllowed": 3,
+      "revisionsUsed": 3,
+      "quotedAmount": 120000,
+      "currency": "INR",
+      "tasks": [
+        {
+          "id": "t15",
+          "title": "Logo concept sketches",
+          "completed": true
+        },
+        {
+          "id": "t16",
+          "title": "Vector emblem refinement",
+          "completed": true
+        },
+        {
+          "id": "t17",
+          "title": "Stream overlays & animated badges",
+          "completed": true
+        },
+        {
+          "id": "t18",
+          "title": "Brand styleguide PDF compilation",
+          "completed": true
+        }
+      ],
+      "createdAt": "2026-10-15T11:00:00Z",
+      "updatedAt": "2026-11-08T18:00:00Z"
+    }
+  ],
+  "files": [
+    {
+      "id": "file_1",
+      "projectId": "proj_1",
+      "projectTitle": "SaaS Platform 2.0 Product Launch Video",
+      "clientId": "client_1",
+      "title": "Keynote_Reveal_Hero_Frame_v2.jpg",
+      "fileType": "image",
+      "fileUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&auto=format&fit=crop&q=80",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&auto=format&fit=crop&q=80",
+      "fileSize": "4.8 MB",
+      "currentVersion": 2,
+      "versions": [
+        {
+          "versionNumber": 1,
+          "fileUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&auto=format&fit=crop&q=80",
+          "thumbnailUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&auto=format&fit=crop&q=80",
+          "fileType": "image",
+          "fileSize": "4.1 MB",
+          "uploadedAt": "2026-11-05 14:00",
+          "notes": "Initial storyboard concept with blue gradient"
+        },
+        {
+          "versionNumber": 2,
+          "fileUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&auto=format&fit=crop&q=80",
+          "thumbnailUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&auto=format&fit=crop&q=80",
+          "fileType": "image",
+          "fileSize": "4.8 MB",
+          "uploadedAt": "2026-11-09 11:30",
+          "notes": "Updated dark purple cyber theme with enhanced analytics cards"
+        }
+      ],
+      "status": "Approved",
+      "isWatermarked": true,
+      "downloadAllowed": false,
+      "viewCount": 17,
+      "lastViewedAt": "2026-11-10 13:49:32",
+      "comments": [
+        {
+          "id": "c1",
+          "fileId": "file_1",
+          "userId": "user_client_1",
+          "userName": "Alex Rivers",
+          "userRole": "CLIENT",
+          "content": "Could we boost the contrast on the upper right metrics chip? It blends slightly into the dark background.",
+          "pinCoordinates": {
+            "x": 74,
+            "y": 22
+          },
+          "createdAt": "2026-11-09 15:10",
+          "resolved": false
+        },
+        {
+          "id": "c2",
+          "fileId": "file_1",
+          "userId": "user_admin",
+          "userName": "Sourav Roy",
+          "userRole": "ADMIN",
+          "content": "Noted! I will add a 12% neon glow boundary around that chip in the final composite.",
+          "createdAt": "2026-11-09 15:45",
+          "resolved": true
+        },
+        {
+          "id": "comm_1794312428463_p2mp",
+          "fileId": "file_1",
+          "userId": "user_client",
+          "userName": "Sourav Roy",
+          "userRole": "ADMIN",
+          "content": "need to redesign the design once more as it is looking a bit dull",
+          "createdAt": "2026-11-10 12:07",
+          "resolved": false
+        }
+      ],
+      "createdAt": "2026-11-05T14:00:00Z",
+      "approvedAt": "2026-11-10T13:55:10.837Z",
+      "approvedBy": "Sourav Roy"
+    },
+    {
+      "id": "file_2",
+      "projectId": "proj_2",
+      "projectTitle": "Winter Glamour Campaign - 5x Reels & Lookbook",
+      "clientId": "client_2",
+      "title": "Reel_01_Backstage_RoughCut_V2.mp4",
+      "fileType": "video",
+      "fileUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&auto=format&fit=crop&q=80",
+      "fileSize": "68.4 MB",
+      "currentVersion": 2,
+      "versions": [
+        {
+          "versionNumber": 1,
+          "fileUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          "thumbnailUrl": "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&auto=format&fit=crop&q=80",
+          "fileType": "video",
+          "fileSize": "72 MB",
+          "uploadedAt": "2026-11-06 18:00",
+          "notes": "First assemble cut with temporary soundtrack"
+        },
+        {
+          "versionNumber": 2,
+          "fileUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          "thumbnailUrl": "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&auto=format&fit=crop&q=80",
+          "fileType": "video",
+          "fileSize": "68.4 MB",
+          "uploadedAt": "2026-11-09 16:30",
+          "notes": "Synced cut with licensed audio track and color grade applied"
+        }
+      ],
+      "status": "Changes Requested",
+      "isWatermarked": true,
+      "downloadAllowed": false,
+      "viewCount": 22,
+      "lastViewedAt": "2026-11-10 10:15",
+      "comments": [
+        {
+          "id": "c3",
+          "fileId": "file_2",
+          "userId": "user_client_2",
+          "userName": "Priya Sharma",
+          "userRole": "CLIENT",
+          "content": "At 00:08, please speed ramp this transition faster so the beat drop aligns with the model spin.",
+          "timestampSeconds": 8,
+          "createdAt": "2026-11-09 19:05",
+          "resolved": false
+        },
+        {
+          "id": "c4",
+          "fileId": "file_2",
+          "userId": "user_client_2",
+          "userName": "Priya Sharma",
+          "userRole": "CLIENT",
+          "content": "At 00:13, add the subtle film burn effect here just before the logo reveal.",
+          "timestampSeconds": 13,
+          "createdAt": "2026-11-09 19:12",
+          "resolved": false
+        }
+      ],
+      "createdAt": "2026-11-06T18:00:00Z"
+    },
+    {
+      "id": "file_3",
+      "projectId": "proj_4",
+      "projectTitle": "Hyperion Esports Complete Rebranding Kit",
+      "clientId": "client_4",
+      "title": "Hyperion_Master_Brand_Manual_Final.pdf",
+      "fileType": "image",
+      "fileUrl": "https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=1600&auto=format&fit=crop&q=80",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=400&auto=format&fit=crop&q=80",
+      "fileSize": "24.2 MB",
+      "currentVersion": 3,
+      "versions": [
+        {
+          "versionNumber": 3,
+          "fileUrl": "https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=1600&auto=format&fit=crop&q=80",
+          "thumbnailUrl": "https://images.unsplash.com/photo-1626544827763-d516dce335e2?w=400&auto=format&fit=crop&q=80",
+          "fileType": "image",
+          "fileSize": "24.2 MB",
+          "uploadedAt": "2026-11-08 17:00",
+          "notes": "Final approved brand guidelines with vector emblem and jersey mockups"
+        }
+      ],
+      "status": "Changes Requested",
+      "isWatermarked": false,
+      "downloadAllowed": false,
+      "viewCount": 38,
+      "lastViewedAt": "2026-11-10 11:00",
+      "approvedAt": "2026-11-08 17:45",
+      "approvedBy": "Nathan Drake",
+      "comments": [
+        {
+          "id": "c5",
+          "fileId": "file_3",
+          "userId": "user_client_4",
+          "userName": "Nathan Drake",
+          "userRole": "CLIENT",
+          "content": "This is incredible work Sourav! The team absolutely loved the neon angular shield. Approved!",
+          "createdAt": "2026-11-08 17:45",
+          "resolved": true
+        }
+      ],
+      "createdAt": "2026-10-20T12:00:00Z"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv_101",
+      "invoiceNumber": "INV-2026-0105",
+      "clientId": "client_1",
+      "clientName": "Alex Rivers",
+      "clientCompany": "Zenith Techworks",
+      "clientEmail": "alex@zenithtech.io",
+      "clientAddress": "Tech Park Tower 3, Outer Ring Rd, Bellandur, Bengaluru",
+      "clientGstin": "29AABCT1334M1Z8",
+      "projectId": "proj_1",
+      "projectTitle": "SaaS Platform 2.0 Product Launch Video",
+      "date": "2026-11-01",
+      "dueDate": "2026-11-16",
+      "paymentTerms": "Net 15 Days",
+      "currency": "INR",
+      "items": [
+        {
+          "id": "item_1",
+          "service": "Product Launch Keynote Video (90s)",
+          "description": "Storyboarding, 3D UI screen modeling, kinetic motion typography, sound design and 4K master export",
+          "quantity": 1,
+          "rate": 110000,
+          "amount": 110000
+        },
+        {
+          "id": "item_2",
+          "service": "3x Social Teaser Cuts (Vertical 9:16)",
+          "description": "Optimized 15-second cutdowns for LinkedIn & X announcements",
+          "quantity": 3,
+          "rate": 10000,
+          "amount": 30000
+        },
+        {
+          "id": "item_3",
+          "service": "Custom Sound Design & Licensed Audio Mastering",
+          "description": "High-energy cyberpunk synth track commercial license",
+          "quantity": 1,
+          "rate": 5000,
+          "amount": 5000
+        }
+      ],
+      "subtotal": 145000,
+      "discountType": "flat",
+      "discountValue": 5000,
+      "discountAmount": 5000,
+      "taxType": "GST (18%)",
+      "taxPercent": 18,
+      "taxAmount": 25200,
+      "total": 165200,
+      "amountPaid": 165200,
+      "balanceDue": 0,
+      "status": "Paid",
+      "notes": "50% advance received. Balance due upon delivery of final unwatermarked master file.",
+      "terms": "Files delivered are subject to commercial license upon full settlement of invoice.",
+      "bankDetails": {
+        "accountName": "Vortex Creative Labs",
+        "accountNumber": "50200067891234",
+        "bankName": "HDFC Bank Ltd",
+        "ifsc": "HDFC0000240",
+        "branch": "Indiranagar Branch, Bengaluru",
+        "upiId": "sourav.vortex@okhdfcbank"
+      },
+      "createdAt": "2026-11-01T10:30:00Z"
+    },
+    {
+      "id": "inv_102",
+      "invoiceNumber": "INV-2026-0106",
+      "clientId": "client_2",
+      "clientName": "Priya Sharma",
+      "clientCompany": "Lumina Fashion Studio",
+      "clientEmail": "priya@luminafashion.in",
+      "clientAddress": "Boutique Row, Bandra West, Mumbai, MH 400050",
+      "clientGstin": "27AALCL9876R1ZO",
+      "projectId": "proj_2",
+      "projectTitle": "Winter Glamour Campaign - 5x Reels & Lookbook",
+      "date": "2026-11-04",
+      "dueDate": "2026-11-11",
+      "paymentTerms": "Due in 7 Days",
+      "currency": "INR",
+      "items": [
+        {
+          "id": "item_4",
+          "service": "High-Fashion 5x Reel Edits",
+          "description": "Cinematic color grading, speed ramps, audio sync, sound effects",
+          "quantity": 5,
+          "rate": 15000,
+          "amount": 75000
+        },
+        {
+          "id": "item_5",
+          "service": "Digital Editorial Lookbook Layout",
+          "description": "Multi-page interactive PDF lookbook for buyers and press",
+          "quantity": 1,
+          "rate": 20000,
+          "amount": 20000
+        }
+      ],
+      "subtotal": 95000,
+      "discountType": "percentage",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "GST (18%)",
+      "taxPercent": 18,
+      "taxAmount": 17100,
+      "total": 112100,
+      "amountPaid": 0,
+      "balanceDue": 112100,
+      "status": "Sent",
+      "notes": "Please quote invoice number INV-2026-0106 on bank transfer or UPI.",
+      "terms": "Payment due on or before 11 November 2026.",
+      "bankDetails": {
+        "accountName": "Vortex Creative Labs",
+        "accountNumber": "50200067891234",
+        "bankName": "HDFC Bank Ltd",
+        "ifsc": "HDFC0000240",
+        "branch": "Indiranagar Branch, Bengaluru",
+        "upiId": "sourav.vortex@okhdfcbank"
+      },
+      "createdAt": "2026-11-04T12:00:00Z"
+    },
+    {
+      "id": "inv_103",
+      "invoiceNumber": "INV-2026-0103",
+      "clientId": "client_4",
+      "clientName": "Nathan Drake",
+      "clientCompany": "Hyperion Esports",
+      "clientEmail": "nathan@hyperionesports.gg",
+      "clientAddress": "Koregaon Park, Pune, MH 411001",
+      "projectId": "proj_4",
+      "projectTitle": "Hyperion Esports Complete Rebranding Kit",
+      "date": "2026-10-16",
+      "dueDate": "2026-10-31",
+      "paymentTerms": "Net 15 Days",
+      "currency": "INR",
+      "items": [
+        {
+          "id": "item_6",
+          "service": "Complete Esports Brand Identity",
+          "description": "Futuristic vector emblem, primary & secondary typography, merchandise mockups",
+          "quantity": 1,
+          "rate": 85000,
+          "amount": 85000
+        },
+        {
+          "id": "item_7",
+          "service": "Animated Twitch Broadcast Overlays",
+          "description": "Stinger transitions, starting soon, webcam borders and alert animations in WebM",
+          "quantity": 1,
+          "rate": 35000,
+          "amount": 35000
+        }
+      ],
+      "subtotal": 120000,
+      "discountType": "flat",
+      "discountValue": 10000,
+      "discountAmount": 10000,
+      "taxType": "GST (18%)",
+      "taxPercent": 18,
+      "taxAmount": 19800,
+      "total": 129800,
+      "amountPaid": 129800,
+      "balanceDue": 0,
+      "status": "Paid",
+      "notes": "Thank you for your business! Full payment received with thanks.",
+      "terms": "All intellectual property transferred upon full settlement.",
+      "bankDetails": {
+        "accountName": "Vortex Creative Labs",
+        "accountNumber": "50200067891234",
+        "bankName": "HDFC Bank Ltd",
+        "ifsc": "HDFC0000240",
+        "branch": "Indiranagar Branch, Bengaluru",
+        "upiId": "sourav.vortex@okhdfcbank"
+      },
+      "createdAt": "2026-10-16T11:00:00Z"
+    },
+    {
+      "id": "inv_104",
+      "invoiceNumber": "INV-2026-0098",
+      "clientId": "client_3",
+      "clientName": "Marcus Vance",
+      "clientCompany": "Pulse Energy Drink",
+      "clientEmail": "marcus@pulseenergy.com",
+      "clientAddress": "Cyber Hub, DLF Phase 2, Gurugram, HR 122002",
+      "clientGstin": "06AACCP5566K1ZT",
+      "date": "2026-10-01",
+      "dueDate": "2026-10-20",
+      "paymentTerms": "Net 20 Days",
+      "currency": "INR",
+      "items": [
+        {
+          "id": "item_8",
+          "service": "Q3 Social Media Creatives Pack (30 designs)",
+          "description": "High-contrast product photo manipulations and story templates",
+          "quantity": 1,
+          "rate": 90000,
+          "amount": 90000
+        }
+      ],
+      "subtotal": 90000,
+      "discountType": "percentage",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "GST (18%)",
+      "taxPercent": 18,
+      "taxAmount": 16200,
+      "total": 106200,
+      "amountPaid": 106200,
+      "balanceDue": 0,
+      "status": "Paid",
+      "notes": "Payment reminder sent on 25 Oct and 02 Nov. Overdue by 21 days.",
+      "terms": "1.5% monthly interest applicable on delayed commercial accounts.",
+      "bankDetails": {
+        "accountName": "Vortex Creative Labs",
+        "accountNumber": "50200067891234",
+        "bankName": "HDFC Bank Ltd",
+        "ifsc": "HDFC0000240",
+        "branch": "Indiranagar Branch, Bengaluru",
+        "upiId": "sourav.vortex@okhdfcbank"
+      },
+      "createdAt": "2026-10-01T09:00:00Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_1794319178534",
+      "invoiceId": "inv_104",
+      "invoiceNumber": "INV-2026-0098",
+      "clientId": "client_3",
+      "clientName": "Marcus Vance",
+      "clientCompany": "Pulse Energy Drink",
+      "amount": 66200,
+      "currency": "INR",
+      "date": "2026-11-10",
+      "time": "19:29:38",
+      "mode": "UPI",
+      "transactionRef": "GATEWAY/PAY/19178528",
+      "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
+      "notes": "Payment recorded",
+      "createdAt": "2026-11-10T13:59:38.534Z"
+    },
+    {
+      "id": "pay_1794318581956",
+      "invoiceId": "inv_101",
+      "invoiceNumber": "INV-2026-0105",
+      "clientId": "client_1",
+      "clientName": "Alex Rivers",
+      "clientCompany": "Zenith Techworks",
+      "amount": 85200,
+      "currency": "INR",
+      "date": "2026-11-10",
+      "time": "19:19:41",
+      "mode": "UPI",
+      "transactionRef": "GATEWAY/PAY/18581948",
+      "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
+      "notes": "Payment recorded",
+      "createdAt": "2026-11-10T13:49:41.955Z"
+    },
+    {
+      "id": "pay_1",
+      "invoiceId": "inv_103",
+      "invoiceNumber": "INV-2026-0103",
+      "clientId": "client_4",
+      "clientName": "Nathan Drake",
+      "clientCompany": "Hyperion Esports",
+      "amount": 129800,
+      "currency": "INR",
+      "date": "2026-10-28",
+      "time": "16:42:10",
+      "mode": "Bank Transfer",
+      "transactionRef": "NEFT/HDFC/20261028776512",
+      "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
+      "notes": "Full payment cleared via HDFC IMPS transfer",
+      "createdAt": "2026-10-28T16:42:10Z"
+    },
+    {
+      "id": "pay_2",
+      "invoiceId": "inv_101",
+      "invoiceNumber": "INV-2026-0105",
+      "clientId": "client_1",
+      "clientName": "Alex Rivers",
+      "clientCompany": "Zenith Techworks",
+      "amount": 80000,
+      "currency": "INR",
+      "date": "2026-11-02",
+      "time": "11:15:30",
+      "mode": "UPI",
+      "transactionRef": "UPI/HDFC/331298045612",
+      "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
+      "notes": "Advance 50% mobilization payment for Product Launch Video",
+      "createdAt": "2026-11-02T11:15:30Z"
+    },
+    {
+      "id": "pay_3",
+      "invoiceId": "inv_104",
+      "invoiceNumber": "INV-2026-0098",
+      "clientId": "client_3",
+      "clientName": "Marcus Vance",
+      "clientCompany": "Pulse Energy Drink",
+      "amount": 40000,
+      "currency": "INR",
+      "date": "2026-10-15",
+      "time": "15:20:00",
+      "mode": "Bank Transfer",
+      "transactionRef": "RTGS/ICIC/998822110044",
+      "notes": "Partial advance towards Q3 creatives",
+      "createdAt": "2026-10-15T15:20:00Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg_1",
+      "projectId": "proj_1",
+      "senderId": "user_admin",
+      "senderName": "Sourav Roy",
+      "senderRole": "ADMIN",
+      "recipientId": "client_1",
+      "message": "Hey Alex! Uploaded V2 of the hero keynote frame. Notice the updated cyberpunk typography and darker backdrop.",
+      "createdAt": "2026-11-09T11:35:00Z"
+    },
+    {
+      "id": "msg_2",
+      "projectId": "proj_1",
+      "senderId": "user_client_1",
+      "senderName": "Alex Rivers",
+      "senderRole": "CLIENT",
+      "recipientId": "user_admin",
+      "message": "Looks super sleek Sourav! Just left a pin comment on the right metrics card. Once that is sharpened, we are good to lock it.",
+      "createdAt": "2026-11-09T15:12:00Z"
+    },
+    {
+      "id": "msg_3",
+      "projectId": "proj_2",
+      "senderId": "user_client_2",
+      "senderName": "Priya Sharma",
+      "senderRole": "CLIENT",
+      "recipientId": "user_admin",
+      "message": "Hi Sourav, I reviewed Reel 1 and left two timestamps at 00:08 and 00:13 for speed ramping. Can we get the update by tomorrow?",
+      "createdAt": "2026-11-09T19:15:00Z"
+    },
+    {
+      "id": "msg_1794319203517_t34t",
+      "senderId": "client_3",
+      "senderName": "Marcus Vance",
+      "senderRole": "CLIENT",
+      "recipientId": "ADMIN",
+      "message": "Payment done!",
+      "attachments": [],
+      "createdAt": "2026-11-10T14:00:03.517Z"
+    }
+  ],
+  "notifications": [
+    {
+      "recipientId": "ADMIN",
+      "title": "Message from Marcus Vance",
+      "message": "Payment done!",
+      "type": "comment",
+      "link": "/admin/messages",
+      "id": "notif_1794319203518_xk9s",
+      "read": true,
+      "createdAt": "2026-11-10T14:00:03.518Z"
+    },
+    {
+      "recipientId": "client_3",
+      "title": "Payment Receipt Issued",
+      "message": "Your payment of ₹66,200 for INV-2026-0098 has been confirmed.",
+      "type": "payment",
+      "link": "/portal/invoices?id=inv_104",
+      "id": "notif_1794319178538_0siu",
+      "read": false,
+      "createdAt": "2026-11-10T13:59:38.538Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Payment Received! 💰",
+      "message": "₹66,200 received from Pulse Energy Drink for INV-2026-0098",
+      "type": "payment",
+      "link": "/admin/payments",
+      "id": "notif_1794319178537_aefu",
+      "read": true,
+      "createdAt": "2026-11-10T13:59:38.537Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Creative Approved! 🎉",
+      "message": "Sourav Roy approved \"Keynote_Reveal_Hero_Frame_v2.jpg\"",
+      "type": "approval",
+      "link": "/admin/files?id=file_1",
+      "id": "notif_1794318910839_ga8d",
+      "read": true,
+      "createdAt": "2026-11-10T13:55:10.839Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Changes Requested on Creative",
+      "message": "Sourav Roy requested changes on \"Keynote_Reveal_Hero_Frame_v2.jpg\"",
+      "type": "comment",
+      "link": "/admin/files?id=file_1",
+      "id": "notif_1794318896733_qmvi",
+      "read": true,
+      "createdAt": "2026-11-10T13:54:56.733Z"
+    },
+    {
+      "recipientId": "client_1",
+      "title": "Payment Receipt Issued",
+      "message": "Your payment of ₹85,200 for INV-2026-0105 has been confirmed.",
+      "type": "payment",
+      "link": "/portal/invoices?id=inv_101",
+      "id": "notif_1794318582059_zuo4",
+      "read": true,
+      "createdAt": "2026-11-10T13:49:42.059Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Payment Received! 💰",
+      "message": "₹85,200 received from Zenith Techworks for INV-2026-0105",
+      "type": "payment",
+      "link": "/admin/payments",
+      "id": "notif_1794318582057_d5el",
+      "read": true,
+      "createdAt": "2026-11-10T13:49:42.057Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Creative Approved! 🎉",
+      "message": "Alex Rivers approved \"Keynote_Reveal_Hero_Frame_v2.jpg\"",
+      "type": "approval",
+      "link": "/admin/files?id=file_1",
+      "id": "notif_1794318572949_p3zf",
+      "read": true,
+      "createdAt": "2026-11-10T13:49:32.949Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Changes Requested on Creative",
+      "message": "Sourav Roy requested changes on \"Hyperion_Master_Brand_Manual_Final.pdf\"",
+      "type": "comment",
+      "link": "/admin/files?id=file_3",
+      "id": "notif_1794318543867_sl6u",
+      "read": true,
+      "createdAt": "2026-11-10T13:49:03.867Z"
+    },
+    {
+      "recipientId": "client_1",
+      "title": "Studio Designer Responded",
+      "message": "Sourav Roy: \"need to redesign the design once more as it is looking a bit\"",
+      "type": "comment",
+      "link": "/portal/files?id=file_1",
+      "id": "notif_1794312428466_emyj",
+      "read": true,
+      "createdAt": "2026-11-10T12:07:08.466Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Changes Requested on Creative",
+      "message": "Alex Rivers requested changes on \"Keynote_Reveal_Hero_Frame_v2.jpg\"",
+      "type": "comment",
+      "link": "/admin/files?id=file_1",
+      "id": "notif_1794307854504_7e7b",
+      "read": true,
+      "createdAt": "2026-11-10T10:50:54.504Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Creative Approved! 🎉",
+      "message": "Alex Rivers approved \"Keynote_Reveal_Hero_Frame_v2.jpg\"",
+      "type": "approval",
+      "link": "/admin/files?id=file_1",
+      "id": "notif_1794307847964_d1qq",
+      "read": true,
+      "createdAt": "2026-11-10T10:50:47.964Z"
+    },
+    {
+      "id": "notif_1",
+      "recipientId": "ADMIN",
+      "title": "New Feedback on Creative",
+      "message": "Alex Rivers pinned a comment on Keynote_Reveal_Hero_Frame_v2.jpg",
+      "type": "comment",
+      "link": "/admin/files?id=file_1",
+      "read": true,
+      "createdAt": "2026-11-09T15:10:00Z"
+    },
+    {
+      "id": "notif_2",
+      "recipientId": "ADMIN",
+      "title": "Video Timestamp Feedback",
+      "message": "Priya Sharma requested changes on Reel_01_Backstage_RoughCut_V2.mp4 at 00:08",
+      "type": "file_review",
+      "link": "/admin/files?id=file_2",
+      "read": true,
+      "createdAt": "2026-11-09T19:05:00Z"
+    },
+    {
+      "id": "notif_3",
+      "recipientId": "ADMIN",
+      "title": "Payment Received",
+      "message": "Received ₹80,000 from Zenith Techworks for INV-2026-0105",
+      "type": "payment",
+      "link": "/admin/payments",
+      "read": true,
+      "createdAt": "2026-11-02T11:15:00Z"
+    },
+    {
+      "id": "notif_4",
+      "recipientId": "client_1",
+      "title": "New File Ready for Review",
+      "message": "Sourav Roy uploaded Keynote_Reveal_Hero_Frame_v2.jpg for review",
+      "type": "file_review",
+      "link": "/portal/files?id=file_1",
+      "read": true,
+      "createdAt": "2026-11-09T11:30:00Z"
+    },
+    {
+      "id": "notif_5",
+      "recipientId": "client_2",
+      "title": "Invoice Sent",
+      "message": "Invoice INV-2026-0106 for ₹1,12,100 is ready for viewing",
+      "type": "invoice",
+      "link": "/portal/invoices?id=inv_102",
+      "read": false,
+      "createdAt": "2026-11-04T12:00:00Z"
+    }
+  ],
+  "activities": [
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794336078186_n4kd",
+      "timestamp": "2026-11-10 18:41:18"
+    },
+    {
+      "userId": "client_3",
+      "userName": "Marcus Vance",
+      "userRole": "CLIENT",
+      "action": "Payment Recorded",
+      "details": "Recorded ₹66,200 payment for INV-2026-0098 (UPI)",
+      "clientId": "client_3",
+      "id": "act_1794319178536_t5ve",
+      "timestamp": "2026-11-10 13:59:38"
+    },
+    {
+      "userId": "client_3",
+      "userName": "Marcus Vance",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Marcus Vance (Pulse Energy Drink) logged into Client Portal",
+      "clientId": "client_3",
+      "id": "act_1794319087646_qana",
+      "timestamp": "2026-11-10 13:58:07"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Sourav Roy",
+      "userRole": "CLIENT",
+      "action": "File Approved",
+      "details": "Client approved \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)!",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794318910837_uco6",
+      "timestamp": "2026-11-10 13:55:10"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Sourav Roy",
+      "userRole": "CLIENT",
+      "action": "Changes Requested",
+      "details": "Client requested changes on \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794318896732_tm9u",
+      "timestamp": "2026-11-10 13:54:56"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794318661553_l62k",
+      "timestamp": "2026-11-10 13:51:01"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794318603400_2bxs",
+      "timestamp": "2026-11-10 13:50:03"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Payment Recorded",
+      "details": "Recorded ₹85,200 payment for INV-2026-0105 (UPI)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794318582055_dsle",
+      "timestamp": "2026-11-10 13:49:42"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "File Viewed",
+      "details": "Alex Rivers opened and viewed \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794318572964_55mz",
+      "timestamp": "2026-11-10 13:49:32"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "File Approved",
+      "details": "Client approved \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)!",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794318572947_3lty",
+      "timestamp": "2026-11-10 13:49:32"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) logged into Client Portal",
+      "clientId": "client_1",
+      "id": "act_1794318563429_86aj",
+      "timestamp": "2026-11-10 13:49:23"
+    },
+    {
+      "userId": "client_4",
+      "userName": "Sourav Roy",
+      "userRole": "CLIENT",
+      "action": "Changes Requested",
+      "details": "Client requested changes on \"Hyperion_Master_Brand_Manual_Final.pdf\" (v3)",
+      "clientId": "client_4",
+      "projectId": "proj_4",
+      "id": "act_1794318543865_acw8",
+      "timestamp": "2026-11-10 13:49:03"
+    },
+    {
+      "userId": "user_client",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "File Comment",
+      "details": "Sourav Roy: \"need to redesign the design once more as it is looking a bit dull\"",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794312428464_oe25",
+      "timestamp": "2026-11-10 12:07:08"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794311613705_ra91",
+      "timestamp": "2026-11-10 11:53:33"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) logged into Client Portal",
+      "clientId": "client_1",
+      "id": "act_1794311217572_cpcu",
+      "timestamp": "2026-11-10 11:46:57"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794311191195_5320",
+      "timestamp": "2026-11-10 11:46:31"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "File Viewed",
+      "details": "Alex Rivers opened and viewed \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794307854512_bong",
+      "timestamp": "2026-11-10 10:50:54"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Changes Requested",
+      "details": "Client requested changes on \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794307854503_c29o",
+      "timestamp": "2026-11-10 10:50:54"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "File Viewed",
+      "details": "Alex Rivers opened and viewed \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794307847976_82pv",
+      "timestamp": "2026-11-10 10:50:47"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "File Approved",
+      "details": "Client approved \"Keynote_Reveal_Hero_Frame_v2.jpg\" (v2)!",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "id": "act_1794307847963_8g9j",
+      "timestamp": "2026-11-10 10:50:47"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794307814004_fwgy",
+      "timestamp": "2026-11-10 10:50:14"
+    },
+    {
+      "id": "act_1",
+      "userId": "user_client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) logged into Client Portal",
+      "clientId": "client_1",
+      "timestamp": "2026-11-10 14:22:15"
+    },
+    {
+      "id": "act_2",
+      "userId": "user_client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Pinned Comment",
+      "details": "Pinned comment on Keynote_Reveal_Hero_Frame_v2.jpg at (74%, 22%)",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "timestamp": "2026-11-09 15:10:04"
+    },
+    {
+      "id": "act_3",
+      "userId": "user_client_2",
+      "userName": "Priya Sharma",
+      "userRole": "CLIENT",
+      "action": "Video Timestamp Feedback",
+      "details": "Requested changes on Reel_01 at timestamp 00:08",
+      "clientId": "client_2",
+      "projectId": "proj_2",
+      "timestamp": "2026-11-09 19:05:32"
+    },
+    {
+      "id": "act_4",
+      "userId": "user_admin",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "Version Uploaded",
+      "details": "Uploaded V2 for Keynote_Reveal_Hero_Frame with watermark enabled",
+      "clientId": "client_1",
+      "projectId": "proj_1",
+      "timestamp": "2026-11-09 11:30:19"
+    },
+    {
+      "id": "act_5",
+      "userId": "user_client_4",
+      "userName": "Nathan Drake",
+      "userRole": "CLIENT",
+      "action": "File Approved",
+      "details": "Approved final Hyperion_Master_Brand_Manual_Final.pdf",
+      "clientId": "client_4",
+      "projectId": "proj_4",
+      "timestamp": "2026-11-08 17:45:00"
+    },
+    {
+      "id": "act_6",
+      "userId": "user_admin",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "Payment Recorded",
+      "details": "Recorded UPI payment of ₹80,000 for INV-2026-0105 from Zenith Techworks",
+      "clientId": "client_1",
+      "timestamp": "2026-11-02 11:15:30"
+    }
+  ],
+  "settings": {
+    "studioName": "VORTEX CREATIVE LABS",
+    "tagline": "Brand Identity, Motion Graphics & Visual Direction",
+    "ownerName": "Sourav Roy",
+    "email": "admin@studiovortex.com",
+    "phone": "+91 98765 43210",
+    "whatsapp": "+91 98765 43210",
+    "website": "https://vortexstudio.design",
+    "address": "Studio 402, Spectrum Creative Hub, Indiranagar, Bengaluru, KA 560038, India",
+    "gstin": "29ABCDE1234F1Z5",
+    "currency": "INR",
+    "currencySymbol": "₹",
+    "logoUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80",
+    "signatureUrl": "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&auto=format&fit=crop&q=80",
+    "upiId": "sourav.vortex@okhdfcbank",
+    "bankDetails": {
+      "accountName": "Vortex Creative Labs",
+      "accountNumber": "50200067891234",
+      "bankName": "HDFC Bank Ltd",
+      "ifsc": "HDFC0000240",
+      "branch": "Indiranagar Branch, Bengaluru"
+    },
+    "invoicePrefix": "INV-2026-",
+    "invoiceNextNumber": 109,
+    "defaultPaymentTerms": "Net 15 Days",
+    "defaultTaxRate": 18,
+    "twoFactorEnabled": false,
+    "theme": "dark",
+    "emailNotifications": {
+      "newFileUploaded": true,
+      "clientFeedback": true,
+      "clientApproval": true,
+      "invoiceSent": true,
+      "paymentReceived": true,
+      "paymentOverdue": true,
+      "deadlineAlert": true
+    }
+  }
+}
