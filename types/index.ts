@@ -198,6 +198,8 @@ export interface Invoice {
 
 export type PaymentMode = 'UPI' | 'Bank Transfer' | 'Cash' | 'Card' | 'Cheque' | 'PayPal' | 'Razorpay';
 
+export type PaymentStatus = 'Completed' | 'Pending Confirmation' | 'Rejected';
+
 export interface Payment {
   id: string;
   invoiceId: string;
@@ -213,6 +215,9 @@ export interface Payment {
   transactionRef: string;
   receiptUrl?: string;
   notes?: string;
+  status?: PaymentStatus;
+  confirmedBy?: string;
+  confirmedAt?: string;
   createdAt: string;
 }
 

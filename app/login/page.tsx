@@ -8,13 +8,10 @@ import {
   Lock,
   User,
   ArrowRight,
-  KeyRound,
-  CheckCircle2,
   AlertCircle,
   HelpCircle,
   Sun,
   Moon,
-  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
@@ -22,8 +19,8 @@ function LoginForm() {
   const router = useRouter();
   const { login, theme, toggleTheme } = useAuth();
 
-  const [identifier, setIdentifier] = useState('admin@studiovortex.com');
-  const [password, setPassword] = useState('admin123');
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [show2FA, setShow2FA] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -61,23 +58,6 @@ function LoginForm() {
       setErrorMsg(err.message || 'Network connection error');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fillTestCredentials = (userType: 'admin' | 'alex' | 'priya' | 'marcus') => {
-    setErrorMsg('');
-    if (userType === 'admin') {
-      setIdentifier('admin@studiovortex.com');
-      setPassword('admin123');
-    } else if (userType === 'alex') {
-      setIdentifier('CL-2026-0042');
-      setPassword('zenith2026');
-    } else if (userType === 'priya') {
-      setIdentifier('CL-2026-0089');
-      setPassword('lumina2026');
-    } else if (userType === 'marcus') {
-      setIdentifier('CL-2026-0104');
-      setPassword('pulse2026');
     }
   };
 
@@ -209,47 +189,6 @@ function LoginForm() {
               <ArrowRight className="h-4 w-4" />
             </button>
           </form>
-
-          {/* Quick 1-Click Credentials Autofill */}
-          <div className="mt-6 pt-5 border-t border-zinc-200 dark:border-zinc-800">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 text-center mb-2.5">
-              Instant 1-Click Demo Fill
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-left">
-              <button
-                type="button"
-                onClick={() => fillTestCredentials('admin')}
-                className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-850 hover:border-violet-500/40 transition-all"
-              >
-                <div className="font-bold text-xs text-violet-700 dark:text-violet-400">👑 Admin Director</div>
-                <div className="text-[10px] text-zinc-500">admin@studiovortex.com</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillTestCredentials('alex')}
-                className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-850 hover:border-cyan-500/40 transition-all"
-              >
-                <div className="font-bold text-xs text-cyan-600 dark:text-cyan-400">Alex (Zenith Tech)</div>
-                <div className="text-[10px] text-zinc-500">CL-2026-0042</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillTestCredentials('priya')}
-                className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-850 hover:border-cyan-500/40 transition-all"
-              >
-                <div className="font-bold text-xs text-cyan-600 dark:text-cyan-400">Priya (Lumina)</div>
-                <div className="text-[10px] text-zinc-500">CL-2026-0089</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillTestCredentials('marcus')}
-                className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-850 hover:border-cyan-500/40 transition-all"
-              >
-                <div className="font-bold text-xs text-cyan-600 dark:text-cyan-400">Marcus (Pulse)</div>
-                <div className="text-[10px] text-zinc-500">CL-2026-0104</div>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

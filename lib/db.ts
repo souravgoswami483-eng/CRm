@@ -679,6 +679,8 @@ const INITIAL_PAYMENTS: Payment[] = [
     transactionRef: 'NEFT/HDFC/20261028776512',
     receiptUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80',
     notes: 'Full payment cleared via HDFC IMPS transfer',
+    status: 'Completed',
+    confirmedBy: 'Sourav Roy (Studio Director)',
     createdAt: '2026-10-28T16:42:10Z',
   },
   {
@@ -696,6 +698,8 @@ const INITIAL_PAYMENTS: Payment[] = [
     transactionRef: 'UPI/HDFC/331298045612',
     receiptUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80',
     notes: 'Advance 50% mobilization payment for Product Launch Video',
+    status: 'Completed',
+    confirmedBy: 'Sourav Roy (Studio Director)',
     createdAt: '2026-11-02T11:15:30Z',
   },
   {
@@ -712,6 +716,8 @@ const INITIAL_PAYMENTS: Payment[] = [
     mode: 'Bank Transfer',
     transactionRef: 'RTGS/ICIC/998822110044',
     notes: 'Partial advance towards Q3 creatives',
+    status: 'Completed',
+    confirmedBy: 'Sourav Roy (Studio Director)',
     createdAt: '2026-10-15T15:20:00Z',
   },
 ];
@@ -884,6 +890,11 @@ export function getDatabase(): DatabaseSchema {
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf-8');
       cachedDb = JSON.parse(data);
+      if (cachedDb && cachedDb.payments) {
+        cachedDb.payments.forEach((p) => {
+          if (!p.status) p.status = 'Completed';
+        });
+      }
       return cachedDb!;
     }
   } catch (err) {
