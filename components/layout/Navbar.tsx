@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { AppNotification } from '@/types';
+import StudioAIAgentModal from '@/components/ai/StudioAIAgentModal';
 
 export default function Navbar() {
   const { user, logout, theme, toggleTheme, quickSwitchUser, settings } = useAuth();
@@ -26,6 +27,7 @@ export default function Navbar() {
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showSwitchMenu, setShowSwitchMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isAIAgentOpen, setIsAIAgentOpen] = useState(false);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -196,6 +198,16 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Studio AI Copilot Button */}
+          <button
+            onClick={() => setIsAIAgentOpen(true)}
+            className="flex items-center gap-1.5 rounded-xl border border-violet-300 dark:border-violet-500/40 bg-gradient-to-r from-violet-500/10 via-indigo-500/10 to-cyan-500/10 hover:from-violet-500/20 hover:to-cyan-500/20 px-3 py-1.5 text-xs font-bold text-violet-700 dark:text-violet-300 transition-all shadow-sm group"
+            title="Launch Vortex Studio AI Agent"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400 group-hover:rotate-12 transition-transform" />
+            <span className="hidden sm:inline">AI Agent</span>
+          </button>
+
           {/* Theme Toggle Button (Light / Dark) */}
           <button
             onClick={toggleTheme}
@@ -302,6 +314,9 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Studio AI Agent Modal */}
+      <StudioAIAgentModal isOpen={isAIAgentOpen} onClose={() => setIsAIAgentOpen(false)} />
     </header>
   );
 }
