@@ -15,6 +15,7 @@ import {
 import { useAuth } from '@/lib/auth-context';
 import { AppNotification } from '@/types';
 import LiveMessagePopup from '@/components/notifications/LiveMessagePopup';
+import ChangesToast from '@/components/notifications/ChangesToast';
 
 export default function Navbar() {
   const { user, logout, theme, toggleTheme, settings } = useAuth();
@@ -215,6 +216,9 @@ export default function Navbar() {
 
       {/* Real-time Message Notification Popup */}
       <LiveMessagePopup />
+
+      {/* Global "Changes Are Being Made" Toast Popup */}
+      <ChangesToast />
     </header>
   );
 }
