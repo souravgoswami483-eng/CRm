@@ -41,6 +41,27 @@
   ],
   "clients": [
     {
+      "id": "client_1794340183382",
+      "clientId": "CL-2026-3745",
+      "name": "sourav goswami",
+      "companyName": "Digital Wolf",
+      "logo": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80",
+      "email": "souravgoswami.dw@gmail.com",
+      "phone": "7003810162",
+      "whatsapp": "7",
+      "address": "",
+      "gstin": "",
+      "industry": "Creative & Media",
+      "source": "Referral",
+      "notes": "",
+      "tags": [
+        "One-time"
+      ],
+      "dateAdded": "2026-11-10",
+      "status": "Active",
+      "tempPassword": "vortex7566"
+    },
+    {
       "id": "client_1",
       "clientId": "CL-2026-0042",
       "name": "Alex Rivers",
@@ -59,7 +80,7 @@
         "VIP"
       ],
       "dateAdded": "2026-01-15",
-      "lastLogin": "2026-11-10 13:49",
+      "lastLogin": "2026-11-10 19:42",
       "status": "Active",
       "tempPassword": "zenith2026"
     },
@@ -82,7 +103,7 @@
         "High-Priority"
       ],
       "dateAdded": "2026-03-02",
-      "lastLogin": "2026-11-09 18:40",
+      "lastLogin": "2026-11-10 19:45",
       "status": "Active",
       "tempPassword": "lumina2026"
     },
@@ -125,7 +146,7 @@
         "One-time"
       ],
       "dateAdded": "2026-09-10",
-      "lastLogin": "2026-11-02 09:30",
+      "lastLogin": "2026-11-10 19:42",
       "status": "Active",
       "tempPassword": "hyperion2026"
     }
@@ -725,6 +746,24 @@
   ],
   "payments": [
     {
+      "id": "pay_1794339801236",
+      "invoiceId": "inv_102",
+      "invoiceNumber": "INV-2026-0106",
+      "clientId": "client_2",
+      "clientName": "Priya Sharma",
+      "clientCompany": "Lumina Fashion Studio",
+      "amount": 40000,
+      "currency": "INR",
+      "date": "2026-11-10",
+      "time": "01:13:21",
+      "mode": "UPI",
+      "transactionRef": "UPI/UTR/39783074",
+      "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
+      "notes": "Client payment submission of ₹40000",
+      "status": "Rejected",
+      "createdAt": "2026-11-10T19:43:21.235Z"
+    },
+    {
       "id": "pay_1794319178534",
       "invoiceId": "inv_104",
       "invoiceNumber": "INV-2026-0098",
@@ -739,7 +778,8 @@
       "transactionRef": "GATEWAY/PAY/19178528",
       "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
       "notes": "Payment recorded",
-      "createdAt": "2026-11-10T13:59:38.534Z"
+      "createdAt": "2026-11-10T13:59:38.534Z",
+      "status": "Completed"
     },
     {
       "id": "pay_1794318581956",
@@ -756,7 +796,8 @@
       "transactionRef": "GATEWAY/PAY/18581948",
       "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
       "notes": "Payment recorded",
-      "createdAt": "2026-11-10T13:49:41.955Z"
+      "createdAt": "2026-11-10T13:49:41.955Z",
+      "status": "Completed"
     },
     {
       "id": "pay_1",
@@ -773,7 +814,8 @@
       "transactionRef": "NEFT/HDFC/20261028776512",
       "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
       "notes": "Full payment cleared via HDFC IMPS transfer",
-      "createdAt": "2026-10-28T16:42:10Z"
+      "createdAt": "2026-10-28T16:42:10Z",
+      "status": "Completed"
     },
     {
       "id": "pay_2",
@@ -790,7 +832,8 @@
       "transactionRef": "UPI/HDFC/331298045612",
       "receiptUrl": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80",
       "notes": "Advance 50% mobilization payment for Product Launch Video",
-      "createdAt": "2026-11-02T11:15:30Z"
+      "createdAt": "2026-11-02T11:15:30Z",
+      "status": "Completed"
     },
     {
       "id": "pay_3",
@@ -806,7 +849,8 @@
       "mode": "Bank Transfer",
       "transactionRef": "RTGS/ICIC/998822110044",
       "notes": "Partial advance towards Q3 creatives",
-      "createdAt": "2026-10-15T15:20:00Z"
+      "createdAt": "2026-10-15T15:20:00Z",
+      "status": "Completed"
     }
   ],
   "messages": [
@@ -849,9 +893,59 @@
       "message": "Payment done!",
       "attachments": [],
       "createdAt": "2026-11-10T14:00:03.517Z"
+    },
+    {
+      "id": "msg_1794339516846_vtel",
+      "senderId": "user_admin",
+      "senderName": "Sourav Roy",
+      "senderRole": "ADMIN",
+      "recipientId": "client_1",
+      "message": "Hey your payment is not updated please check",
+      "attachments": [],
+      "createdAt": "2026-11-10T19:38:36.846Z"
     }
   ],
   "notifications": [
+    {
+      "recipientId": "ADMIN",
+      "title": "New Client Onboarded",
+      "message": "sourav goswami (Digital Wolf) was onboarded with ID CL-2026-3745",
+      "type": "system",
+      "link": "/admin/clients",
+      "id": "notif_1794340183387_vlv7",
+      "read": true,
+      "createdAt": "2026-11-10T19:49:43.387Z"
+    },
+    {
+      "recipientId": "client_2",
+      "title": "Payment Verification Notice ⚠️",
+      "message": "Your payment submission of ₹40,000 for INV-2026-0106 (Ref: UPI/UTR/39783074) could not be verified. Please check UTR or contact admin.",
+      "type": "payment",
+      "link": "/portal/invoices",
+      "id": "notif_1794339882557_0c5p",
+      "read": true,
+      "createdAt": "2026-11-10T19:44:42.557Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "Payment Confirmation Requested 🔔",
+      "message": "Lumina Fashion Studio submitted ₹40,000 for INV-2026-0106. Action required: Verify and authenticate.",
+      "type": "payment",
+      "link": "/admin/payments",
+      "id": "notif_1794339801256_4k1r",
+      "read": true,
+      "createdAt": "2026-11-10T19:43:21.256Z"
+    },
+    {
+      "recipientId": "client_1",
+      "title": "Message from Sourav Roy",
+      "message": "Hey your payment is not updated please check",
+      "type": "comment",
+      "link": "/portal/messages",
+      "id": "notif_1794339516848_moot",
+      "read": true,
+      "createdAt": "2026-11-10T19:38:36.848Z"
+    },
     {
       "recipientId": "ADMIN",
       "title": "Message from Marcus Vance",
@@ -1019,11 +1113,141 @@
       "message": "Invoice INV-2026-0106 for ₹1,12,100 is ready for viewing",
       "type": "invoice",
       "link": "/portal/invoices?id=inv_102",
-      "read": false,
+      "read": true,
       "createdAt": "2026-11-04T12:00:00Z"
     }
   ],
   "activities": [
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "Client Updated",
+      "details": "Updated details for sourav goswami (Digital Wolf)",
+      "clientId": "client_1794340183382",
+      "id": "act_1794340259853_jw18",
+      "timestamp": "2026-11-10 19:50:59"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "Client Updated",
+      "details": "Updated details for sourav goswami (Digital Wolf)",
+      "clientId": "client_1794340183382",
+      "id": "act_1794340249041_vqtl",
+      "timestamp": "2026-11-10 19:50:49"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "Client Updated",
+      "details": "Updated details for sourav goswami (Digital Wolf)",
+      "clientId": "client_1794340183382",
+      "id": "act_1794340238724_vq6r",
+      "timestamp": "2026-11-10 19:50:38"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy",
+      "userRole": "ADMIN",
+      "action": "Client Created",
+      "details": "Created new client: sourav goswami (Digital Wolf) with ID CL-2026-3745",
+      "clientId": "client_1794340183382",
+      "id": "act_1794340183384_ncsc",
+      "timestamp": "2026-11-10 19:49:43"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794340106810_b2px",
+      "timestamp": "2026-11-10 19:48:26"
+    },
+    {
+      "userId": "client_2",
+      "userName": "Priya Sharma",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Priya Sharma (Lumina Fashion Studio) logged into Client Portal",
+      "clientId": "client_2",
+      "id": "act_1794339903439_ly9t",
+      "timestamp": "2026-11-10 19:45:03"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Payment Rejected",
+      "details": "Rejected unverified payment submission of ₹40,000 for INV-2026-0106",
+      "clientId": "client_2",
+      "projectId": "proj_2",
+      "id": "act_1794339882556_igpy",
+      "timestamp": "2026-11-10 19:44:42"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin logged into Creative Studio CRM dashboard",
+      "id": "act_1794339868892_ksc6",
+      "timestamp": "2026-11-10 19:44:28"
+    },
+    {
+      "userId": "client_2",
+      "userName": "Priya Sharma",
+      "userRole": "CLIENT",
+      "action": "Payment Confirmation Requested",
+      "details": "Priya Sharma (Lumina Fashion Studio) submitted ₹40,000 for INV-2026-0106. Awaiting admin authentication.",
+      "clientId": "client_2",
+      "projectId": "proj_2",
+      "id": "act_1794339801254_m9tu",
+      "timestamp": "2026-11-10 19:43:21"
+    },
+    {
+      "userId": "client_2",
+      "userName": "Priya Sharma",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Priya Sharma (Lumina Fashion Studio) logged into Client Portal",
+      "clientId": "client_2",
+      "id": "act_1794339776605_bes3",
+      "timestamp": "2026-11-10 19:42:56"
+    },
+    {
+      "userId": "client_4",
+      "userName": "Nathan Drake",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Nathan Drake (Hyperion Esports) logged into Client Portal",
+      "clientId": "client_4",
+      "id": "act_1794339745887_jrzf",
+      "timestamp": "2026-11-10 19:42:25"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) logged into Client Portal",
+      "clientId": "client_1",
+      "id": "act_1794339726637_hr7v",
+      "timestamp": "2026-11-10 19:42:06"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) logged into Client Portal",
+      "clientId": "client_1",
+      "id": "act_1794339551689_b3aw",
+      "timestamp": "2026-11-10 19:39:11"
+    },
     {
       "userId": "user_admin",
       "userName": "Sourav Roy (Creative Director)",

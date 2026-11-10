@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -17,7 +17,13 @@ import { useAuth } from '@/lib/auth-context';
 
 function LoginForm() {
   const router = useRouter();
-  const { login, theme, toggleTheme } = useAuth();
+  const { user, login, theme, toggleTheme } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      router.replace(user.role === 'ADMIN' ? '/admin' : '/portal');
+    }
+  }, [user, router]);
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -79,8 +85,8 @@ function LoginForm() {
 
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link href="/" className="inline-flex items-center gap-2.5 group">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-400 p-0.5 shadow-xl shadow-violet-600/25 group-hover:scale-105 transition-transform">
+        <div className="inline-flex items-center gap-2.5 select-none cursor-default">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-400 p-0.5 shadow-xl shadow-violet-600/25">
             <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-white dark:bg-zinc-950">
               <Sparkles className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
@@ -88,7 +94,7 @@ function LoginForm() {
           <span className="text-xl font-black tracking-wider text-zinc-900 dark:text-white">
             VORTEX STUDIO
           </span>
-        </Link>
+        </div>
         <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
           Sign In
         </h2>

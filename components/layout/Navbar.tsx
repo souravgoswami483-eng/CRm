@@ -72,19 +72,19 @@ export default function Navbar() {
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Brand & Mode Indicator */}
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500 shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform">
+          <div className="flex items-center gap-2 select-none cursor-default">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500 shadow-md shadow-violet-500/20">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
             <div>
-              <span className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-violet-600 dark:group-hover:text-white transition-colors">
+              <span className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
                 {settings?.studioName || 'VORTEX'}
               </span>
               <span className="block text-[10px] font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
                 {user?.role === 'ADMIN' ? 'STUDIO DIRECTOR CRM' : 'CLIENT COLLABORATION HUB'}
               </span>
             </div>
-          </Link>
+          </div>
 
           {/* Role Badge */}
           {user && (

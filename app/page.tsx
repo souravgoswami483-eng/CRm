@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Sparkles,
   ArrowRight,
@@ -23,8 +24,15 @@ import {
 import { useAuth } from '@/lib/auth-context';
 
 export default function LandingPage() {
-  const { user, theme, toggleTheme } = useAuth();
+  const router = useRouter();
+  const { user, loading, theme, toggleTheme } = useAuth();
   const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      router.replace(user.role === 'ADMIN' ? '/admin' : '/portal');
+    }
+  }, [user, router]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +41,14 @@ export default function LandingPage() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (user) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-xs text-zinc-400">
+        Redirecting to your active portal...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white selection:bg-violet-600 selection:text-white transition-colors duration-200 overflow-hidden">

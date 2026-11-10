@@ -75,16 +75,18 @@ export default function ClientSidebar() {
         </nav>
       </div>
 
-      {/* Switch back to Admin Studio */}
-      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800/80">
-        <Link
-          href="/admin"
-          className="flex items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-2.5 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors shadow-sm"
-        >
-          <ArrowLeft className="h-4 w-4 text-violet-600 dark:text-violet-400" />
-          <span>Back to Studio Admin</span>
-        </Link>
-      </div>
+      {/* Switch back to Admin Studio (Only visible if Admin is previewing client portal) */}
+      {user?.role === 'ADMIN' && (
+        <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800/80">
+          <Link
+            href="/admin"
+            className="flex items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-2.5 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition-colors shadow-sm"
+          >
+            <ArrowLeft className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+            <span>Back to Studio Admin</span>
+          </Link>
+        </div>
+      )}
     </aside>
   );
 }
