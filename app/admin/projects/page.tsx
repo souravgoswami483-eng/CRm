@@ -101,6 +101,7 @@ export default function ProjectsPage() {
         onProjectStatusChange={handleStatusChange}
         onSelectProject={(proj) => setSelectedProject(proj)}
         onNewProject={() => {
+          fetchProjects(); // Refetch clients whenever create project form opens
           setEditingProject(null);
           setIsModalOpen(true);
         }}

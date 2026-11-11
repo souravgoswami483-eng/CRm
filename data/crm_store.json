@@ -6,7 +6,8 @@
       "name": "Sourav Roy (Creative Director)",
       "email": "admin@studiovortex.com",
       "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-      "twoFactorEnabled": false
+      "twoFactorEnabled": false,
+      "passwordHash": "pbkdf2:40f92680e91411340e18626b01f1ec61:babd1aec38fed3f756b8f3f22b0c0a3abd9db65bcb3746d73c7559e6a89c5bd5"
     },
     {
       "id": "user_client_1",
@@ -16,7 +17,8 @@
       "clientId": "CL-2026-0042",
       "companyName": "Zenith Techworks",
       "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-      "mustChangePassword": false
+      "mustChangePassword": false,
+      "passwordHash": "pbkdf2:62bfd2014cc8a60602527ac998fb230a:b8085b19bede4167bb4bbeefe8f8a4f2399c130f1447b197918401f330c97072"
     },
     {
       "id": "user_client_2",
@@ -26,7 +28,8 @@
       "clientId": "CL-2026-0089",
       "companyName": "Lumina Fashion Studio",
       "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
-      "mustChangePassword": false
+      "mustChangePassword": false,
+      "passwordHash": "pbkdf2:4e83c977a3086a392b99eb32c00e1f3f:378574ce5831b20c9dc43df348be8ee7b2b929f64f396c73c3c8ad133361a5c7"
     },
     {
       "id": "user_client_3",
@@ -36,7 +39,8 @@
       "clientId": "CL-2026-0104",
       "companyName": "Pulse Energy Drink",
       "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-      "mustChangePassword": false
+      "mustChangePassword": false,
+      "passwordHash": "pbkdf2:806d4f9f18c771ea8bb92ff05f049803:b0b3a8b2c27fce79dce91f3d46b226e0e93b32817cdd5e013f78209bb3f681da"
     }
   ],
   "clients": [
@@ -59,7 +63,7 @@
       ],
       "dateAdded": "2026-11-10",
       "status": "Active",
-      "tempPassword": "vortex7566"
+      "passwordHash": "pbkdf2:6d971ae9164c155e2dbee4afe6cc6afc:97ed7ada75f2f4eef82f56006010c0fe9b825cd083573065377477e8ea31d4d6"
     },
     {
       "id": "client_1",
@@ -80,9 +84,9 @@
         "VIP"
       ],
       "dateAdded": "2026-01-15",
-      "lastLogin": "2026-11-10 19:42",
+      "lastLogin": "2026-11-11 05:47",
       "status": "Active",
-      "tempPassword": "zenith2026"
+      "passwordHash": "pbkdf2:2daa7b8a6829d3f8ff8d59482e7572d1:029379c2166cb11d0c98c0d2bfdd029c6c671072173c254ffc3ded6a0f701a5b"
     },
     {
       "id": "client_2",
@@ -105,7 +109,7 @@
       "dateAdded": "2026-03-02",
       "lastLogin": "2026-11-10 19:45",
       "status": "Active",
-      "tempPassword": "lumina2026"
+      "passwordHash": "pbkdf2:5e72df19f8769d2773499696030f4f0e:58d0acada5c4dd4eb04d1368a397629abecee0def2b3f0091889440d7054ac32"
     },
     {
       "id": "client_3",
@@ -127,7 +131,7 @@
       "dateAdded": "2026-06-20",
       "lastLogin": "2026-11-10 13:58",
       "status": "Active",
-      "tempPassword": "pulse2026"
+      "passwordHash": "pbkdf2:18f8a7f51da9d98a58476513365a05a9:20736d564e64a6610d12339d7bf26ec980a52e09c5796a91316aca4833ad4ae1"
     },
     {
       "id": "client_4",
@@ -148,7 +152,7 @@
       "dateAdded": "2026-09-10",
       "lastLogin": "2026-11-10 19:42",
       "status": "Active",
-      "tempPassword": "hyperion2026"
+      "passwordHash": "pbkdf2:669a924b3fa230ea08e2ba7dd20df747:75930327110a0e098de5a983b732151a4ef9ca095c3e37e271b6352413be285d"
     }
   ],
   "projects": [
@@ -522,6 +526,55 @@
     }
   ],
   "invoices": [
+    {
+      "id": "inv_1794376078989",
+      "invoiceNumber": "INV-2026-0109",
+      "isEstimate": false,
+      "clientId": "client_1",
+      "clientName": "Alex Rivers",
+      "clientCompany": "Zenith Techworks",
+      "clientEmail": "alex@zenithtech.io",
+      "clientAddress": "Tech Park Tower 3, Outer Ring Rd, Bellandur, Bengaluru",
+      "clientGstin": "29AABCT1334M1Z8",
+      "date": "2026-11-11",
+      "dueDate": "2026-11-26",
+      "paymentTerms": "Net 15 Days",
+      "currency": "INR",
+      "items": [
+        {
+          "id": "item_1794376078989_0",
+          "service": "Brand Motion Asset",
+          "description": "",
+          "quantity": 1,
+          "rate": 25000,
+          "amount": 25000
+        }
+      ],
+      "subtotal": 25000,
+      "discountType": "flat",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "GST (18%)",
+      "taxPercent": null,
+      "taxAmount": null,
+      "total": null,
+      "amountPaid": 0,
+      "balanceDue": null,
+      "status": "Draft",
+      "notes": "Thank you for choosing Vortex Creative Labs for your visual branding needs.",
+      "terms": "Payment is requested within the due date via UPI or Bank Transfer.",
+      "bankDetails": {
+        "accountName": "Vortex Creative Labs",
+        "accountNumber": "50200067891234",
+        "bankName": "HDFC Bank Ltd",
+        "ifsc": "HDFC0000240",
+        "branch": "Indiranagar Branch, Bengaluru",
+        "upiId": "sourav.vortex@okhdfcbank"
+      },
+      "isRecurring": false,
+      "recurringInterval": "Monthly",
+      "createdAt": "2026-11-11T05:47:58.989Z"
+    },
     {
       "id": "inv_101",
       "invoiceNumber": "INV-2026-0105",
@@ -1120,6 +1173,35 @@
   "activities": [
     {
       "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Invoice Created",
+      "details": "Generated INV-2026-0109 for Zenith Techworks - Total: ₹NaN",
+      "clientId": "client_1",
+      "id": "act_1794376079007_typd",
+      "timestamp": "2026-11-11 05:47:59"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) authenticated into Client Portal",
+      "clientId": "client_1",
+      "id": "act_1794376078938_wizt",
+      "timestamp": "2026-11-11 05:47:58"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin authenticated into Creative Studio CRM dashboard",
+      "id": "act_1794376078897_hm52",
+      "timestamp": "2026-11-11 05:47:58"
+    },
+    {
+      "userId": "user_admin",
       "userName": "Sourav Roy",
       "userRole": "ADMIN",
       "action": "Client Updated",
@@ -1551,7 +1633,7 @@
       "branch": "Indiranagar Branch, Bengaluru"
     },
     "invoicePrefix": "INV-2026-",
-    "invoiceNextNumber": 109,
+    "invoiceNextNumber": 110,
     "defaultPaymentTerms": "Net 15 Days",
     "defaultTaxRate": 18,
     "twoFactorEnabled": false,

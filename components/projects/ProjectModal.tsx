@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, FolderPlus, FolderKanban } from 'lucide-react';
 import { Project, ProjectPriority, ProjectType, ProjectStatus, Client } from '@/types';
 
@@ -40,10 +40,21 @@ export default function ProjectModal({
   const [quotedAmount, setQuotedAmount] = useState<number>(initialData?.quotedAmount || 50000);
   const [saving, setSaving] = useState(false);
 
+  // Synchronize client selection whenever clients list loads or modal opens
+  useEffect(() => {
+    if (clients.length > 0 && (!clientId || !clients.some((c) => c.id === clientId))) {
+      setClientId(initialData?.clientId || clients[0].id);
+    }
+  }, [clients, initialData, clientId]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!clientId || clientId.trim() === '') {
+      alert('Please select a valid client before saving the project.');
+      return;
+    }
     setSaving(true);
     const selectedClient = clients.find((c) => c.id === clientId);
 
@@ -127,11 +138,15 @@ export default function ProjectModal({
                 required
                 className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
               >
-                {clients.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
-                    {c.companyName} ({c.name}) [{c.clientId}]
-                  </option>
-                ))}
+                {clients.length === 0 ? (
+                  <option value="" disabled>Loading clients...</option>
+                ) : (
+                  clients.map((c) => (
+                    <option key={c.id} value={c.id} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
+                      {c.companyName} ({c.name}) [{c.clientId}]
+                    </option>
+                  ))
+                )}
               </select>
             </div>
           </div>

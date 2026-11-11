@@ -39,6 +39,14 @@ export default function ClientsPage() {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [activeProfileClient, setActiveProfileClient] = useState<any | null>(null);
   const [profileData, setProfileData] = useState<any | null>(null);
+  const [copiedPass, setCopiedPass] = useState(false);
+  const [generatedPasswordModal, setGeneratedPasswordModal] = useState<{
+    isOpen: boolean;
+    clientName: string;
+    companyName: string;
+    clientId: string;
+    password: string;
+  } | null>(null);
 
   const fetchClients = async () => {
     try {
@@ -89,19 +97,27 @@ export default function ClientsPage() {
     }
   };
 
-  // Reset Client Password
+  // Reset Client Password (generates new one-time password and forces change on next login)
   const resetPassword = async (client: any) => {
-    const newPass = `vortex${Math.floor(1000 + Math.random() * 9000)}`;
     try {
-      await fetch(`/api/clients/${client.id}`, {
+      const res = await fetch(`/api/clients/${client.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tempPassword: newPass }),
+        body: JSON.stringify({ action: 'resetPassword' }),
       });
-      alert(`New password for ${client.name} (${client.clientId}) is: ${newPass}`);
+      const data = await res.json();
+      if (data.oneTimePassword) {
+        setGeneratedPasswordModal({
+          isOpen: true,
+          clientName: client.name,
+          companyName: client.companyName,
+          clientId: client.clientId,
+          password: data.oneTimePassword,
+        });
+      }
       fetchClients();
     } catch (e) {
-      console.error(e);
+      console.error('Password reset failed', e);
     }
   };
 
@@ -455,10 +471,11 @@ export default function ClientsPage() {
                   <span className="text-zinc-500">GSTIN:</span>
                   <span className="font-mono text-zinc-800 dark:text-zinc-200">{activeProfileClient.gstin || 'Unregistered'}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">Portal Password:</span>
-                  <span className="font-mono text-cyan-700 dark:text-cyan-400 font-bold">
-                    {activeProfileClient.tempPassword || 'client123'}
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-500">Security Credentials:</span>
+                  <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Salted Hash Protected
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -531,7 +548,7 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {/* MODAL */}
+      {/* ONBOARD MODAL */}
       <ClientModal
         isOpen={isClientModalOpen}
         onClose={() => {
@@ -540,14 +557,90 @@ export default function ClientsPage() {
         }}
         initialData={editingClient}
         onSave={async (clientData) => {
-          await fetch('/api/clients', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(clientData),
-          });
-          fetchClients();
+          try {
+            const res = await fetch('/api/clients', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(clientData),
+            });
+            const data = await res.json();
+            if (data.oneTimePassword) {
+              setGeneratedPasswordModal({
+                isOpen: true,
+                clientName: data.client.name,
+                companyName: data.client.companyName,
+                clientId: data.client.clientId,
+                password: data.oneTimePassword,
+              });
+            }
+            fetchClients();
+          } catch (err) {
+            console.error('Failed to save client', err);
+          }
         }}
       />
+
+      {/* ONE-TIME PASSWORD MODAL (Displayed once on create or reset) */}
+      {generatedPasswordModal?.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-violet-500/30 bg-white dark:bg-zinc-950 p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600/20 text-violet-600 dark:text-violet-400 border border-violet-500/30">
+                <Lock className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-zinc-900 dark:text-white">
+                  One-Time Portal Password
+                </h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  {generatedPasswordModal.clientName} ({generatedPasswordModal.companyName})
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-300 dark:border-amber-500/30 text-xs text-amber-800 dark:text-amber-300">
+              ⚠️ <strong>Security Notice:</strong> This password is shown only once and is securely stored as a salted PBKDF2 hash. The client will be required to choose a new password upon first login.
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-xs font-semibold text-zinc-500">Unique Client ID:</span>
+              <div className="font-mono text-xs font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-900 p-2 rounded-lg">
+                {generatedPasswordModal.clientId}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-xs font-semibold text-zinc-500">One-Time Password:</span>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-300 dark:border-cyan-800 p-2.5 rounded-lg select-all">
+                  {generatedPasswordModal.password}
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `Client ID: ${generatedPasswordModal.clientId}\nTemporary Password: ${generatedPasswordModal.password}\nLogin at: ${window.location.origin}/login`
+                    );
+                    setCopiedPass(true);
+                    setTimeout(() => setCopiedPass(false), 2000);
+                  }}
+                  className="px-3 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold transition-all shadow-md"
+                >
+                  {copiedPass ? 'Copied! ✓' : 'Copy'}
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setGeneratedPasswordModal(null)}
+                className="w-full rounded-xl bg-zinc-900 dark:bg-zinc-100 py-2.5 text-xs font-bold text-white dark:text-zinc-900 hover:opacity-90 transition-opacity"
+              >
+                I Have Safely Saved / Shared The Password
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

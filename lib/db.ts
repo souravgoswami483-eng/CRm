@@ -12,6 +12,7 @@ import {
   ActivityLog,
   StudioSettings,
 } from '@/types';
+import { hashPassword } from '@/lib/auth-server';
 
 export interface DatabaseSchema {
   users: User[];
@@ -76,6 +77,7 @@ const INITIAL_USERS: User[] = [
     email: 'admin@studiovortex.com',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     twoFactorEnabled: false,
+    passwordHash: hashPassword('admin123'),
   },
   {
     id: 'user_client_1',
@@ -86,6 +88,7 @@ const INITIAL_USERS: User[] = [
     companyName: 'Zenith Techworks',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
     mustChangePassword: false,
+    passwordHash: hashPassword('zenith2026'),
   },
   {
     id: 'user_client_2',
@@ -96,6 +99,7 @@ const INITIAL_USERS: User[] = [
     companyName: 'Lumina Fashion Studio',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
     mustChangePassword: false,
+    passwordHash: hashPassword('lumina2026'),
   },
   {
     id: 'user_client_3',
@@ -106,6 +110,7 @@ const INITIAL_USERS: User[] = [
     companyName: 'Pulse Energy Drink',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
     mustChangePassword: false,
+    passwordHash: hashPassword('pulse2026'),
   },
 ];
 
@@ -128,7 +133,8 @@ const INITIAL_CLIENTS: Client[] = [
     dateAdded: '2026-01-15',
     lastLogin: '2026-11-10 14:22',
     status: 'Active',
-    tempPassword: 'zenith2026',
+    passwordHash: hashPassword('zenith2026'),
+    mustChangePassword: false,
   },
   {
     id: 'client_2',
@@ -148,7 +154,8 @@ const INITIAL_CLIENTS: Client[] = [
     dateAdded: '2026-03-02',
     lastLogin: '2026-11-09 18:40',
     status: 'Active',
-    tempPassword: 'lumina2026',
+    passwordHash: hashPassword('lumina2026'),
+    mustChangePassword: false,
   },
   {
     id: 'client_3',
@@ -168,7 +175,8 @@ const INITIAL_CLIENTS: Client[] = [
     dateAdded: '2026-06-20',
     lastLogin: '2026-11-08 11:15',
     status: 'Active',
-    tempPassword: 'pulse2026',
+    passwordHash: hashPassword('pulse2026'),
+    mustChangePassword: false,
   },
   {
     id: 'client_4',
@@ -187,7 +195,8 @@ const INITIAL_CLIENTS: Client[] = [
     dateAdded: '2026-09-10',
     lastLogin: '2026-11-02 09:30',
     status: 'Active',
-    tempPassword: 'hyperion2026',
+    passwordHash: hashPassword('hyperion2026'),
+    mustChangePassword: false,
   },
 ];
 
@@ -875,12 +884,28 @@ const INITIAL_ACTIVITIES: ActivityLog[] = [
   },
 ];
 
+export function sanitizeClient<T extends Partial<Client>>(client: T): Omit<T, 'passwordHash'> {
+  const copy: any = { ...client };
+  delete copy.passwordHash;
+  delete copy.tempPassword;
+  return copy;
+}
+
+export function sanitizeUser<T extends Partial<User>>(user: T): Omit<T, 'passwordHash'> {
+  const copy: any = { ...user };
+  delete copy.passwordHash;
+  delete copy.tempPassword;
+  return copy;
+}
+
 let cachedDb: DatabaseSchema | null = null;
 
 export function getDatabase(): DatabaseSchema {
   if (cachedDb) {
     return cachedDb;
   }
+
+  let db: DatabaseSchema;
 
   try {
     if (!fs.existsSync(DATA_DIR)) {
@@ -889,33 +914,125 @@ export function getDatabase(): DatabaseSchema {
 
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf-8');
-      cachedDb = JSON.parse(data);
-      if (cachedDb && cachedDb.payments) {
-        cachedDb.payments.forEach((p) => {
-          if (!p.status) p.status = 'Completed';
-        });
-      }
-      return cachedDb!;
+      db = JSON.parse(data);
+    } else {
+      db = {
+        users: INITIAL_USERS,
+        clients: INITIAL_CLIENTS,
+        projects: INITIAL_PROJECTS,
+        files: INITIAL_FILES,
+        invoices: INITIAL_INVOICES,
+        payments: INITIAL_PAYMENTS,
+        messages: INITIAL_MESSAGES,
+        notifications: INITIAL_NOTIFICATIONS,
+        activities: INITIAL_ACTIVITIES,
+        settings: INITIAL_SETTINGS,
+      };
     }
   } catch (err) {
     console.error('Error reading DB, initializing fallback memory store', err);
+    db = {
+      users: INITIAL_USERS,
+      clients: INITIAL_CLIENTS,
+      projects: INITIAL_PROJECTS,
+      files: INITIAL_FILES,
+      invoices: INITIAL_INVOICES,
+      payments: INITIAL_PAYMENTS,
+      messages: INITIAL_MESSAGES,
+      notifications: INITIAL_NOTIFICATIONS,
+      activities: INITIAL_ACTIVITIES,
+      settings: INITIAL_SETTINGS,
+    };
   }
 
-  const initialDb: DatabaseSchema = {
-    users: INITIAL_USERS,
-    clients: INITIAL_CLIENTS,
-    projects: INITIAL_PROJECTS,
-    files: INITIAL_FILES,
-    invoices: INITIAL_INVOICES,
-    payments: INITIAL_PAYMENTS,
-    messages: INITIAL_MESSAGES,
-    notifications: INITIAL_NOTIFICATIONS,
-    activities: INITIAL_ACTIVITIES,
-    settings: INITIAL_SETTINGS,
-  };
+  // --- Automatic Migration, Sanitization & QA Cleanup ---
+  let changed = false;
 
-  saveDatabase(initialDb);
-  return initialDb;
+  // 1. Delete QA test records (Task 1 & Task 2 requirement)
+  const initialClientCount = db.clients.length;
+  db.clients = db.clients.filter((c) => {
+    const isQA =
+      c.name?.toLowerCase().includes('qa test') ||
+      c.companyName?.toLowerCase().includes('qa test') ||
+      c.name === 'QA Test Brand (delete me)' ||
+      c.companyName === 'QA Test Brand (delete me)';
+    return !isQA;
+  });
+  if (db.clients.length !== initialClientCount) changed = true;
+
+  const initialProjCount = db.projects.length;
+  db.projects = db.projects.filter((p) => {
+    const isQA =
+      p.title?.toLowerCase().includes('qa test') ||
+      p.title?.includes('Video Moople Work No.1') ||
+      !p.clientId ||
+      p.clientId.trim() === '' ||
+      p.clientCompany === 'Company';
+    return !isQA;
+  });
+  if (db.projects.length !== initialProjCount) changed = true;
+
+  const initialInvCount = db.invoices.length;
+  db.invoices = db.invoices.filter((inv) => {
+    const isQA =
+      inv.total === 59000 ||
+      !inv.clientId ||
+      inv.clientId.trim() === '' ||
+      inv.clientCompany === 'Company';
+    return !isQA;
+  });
+  if (db.invoices.length !== initialInvCount) changed = true;
+
+  // 2. Client password migration: remove tempPassword, ensure salted hash
+  db.clients.forEach((c: any) => {
+    if (c.tempPassword) {
+      if (!c.passwordHash) {
+        c.passwordHash = hashPassword(c.tempPassword);
+      }
+      delete c.tempPassword;
+      changed = true;
+    }
+    if (!c.passwordHash) {
+      c.passwordHash = hashPassword('client123');
+      c.mustChangePassword = true;
+      changed = true;
+    }
+  });
+
+  // 3. User password migration
+  db.users.forEach((u: any) => {
+    delete u.tempPassword;
+    if (u.role === 'ADMIN' && !u.passwordHash) {
+      u.passwordHash = hashPassword('admin123');
+      changed = true;
+    } else if (u.role === 'CLIENT' && !u.passwordHash) {
+      u.passwordHash = hashPassword('client123');
+      changed = true;
+    }
+  });
+
+  // 4. Ensure payments status
+  if (db.payments) {
+    db.payments.forEach((p) => {
+      if (!p.status) {
+        p.status = 'Completed';
+        changed = true;
+      }
+    });
+  }
+
+  // 5. Ensure invoice numbering sequence exists on server
+  if (!db.settings.invoiceNextNumber || isNaN(db.settings.invoiceNextNumber)) {
+    db.settings.invoiceNextNumber = 110;
+    changed = true;
+  }
+
+  cachedDb = db;
+  if (changed) {
+    saveDatabase(db);
+  }
+
+  return cachedDb;
 }
 
 export function saveDatabase(db: DatabaseSchema): void {

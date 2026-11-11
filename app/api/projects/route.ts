@@ -1,18 +1,34 @@
 import { NextResponse } from 'next/server';
 import { getDatabase, saveDatabase, recordActivity, addNotification } from '@/lib/db';
+import { getSessionFromRequest } from '@/lib/auth-server';
 import { Project } from '@/types';
 
 export async function GET(request: Request) {
+  const session = await getSessionFromRequest(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
-  const clientId = searchParams.get('clientId');
+  const requestedClientId = searchParams.get('clientId');
   const status = searchParams.get('status');
   const priority = searchParams.get('priority');
 
   const db = getDatabase();
   let projects = [...db.projects];
 
-  if (clientId) {
-    projects = projects.filter((p) => p.clientId === clientId);
+  // Scoping: Clients only see their own projects
+  if (session.role === 'CLIENT') {
+    projects = projects.filter(
+      (p) => p.clientId === session.userId || p.clientId === session.clientId
+    );
+  } else {
+    // Admin filtering
+    if (requestedClientId) {
+      projects = projects.filter(
+        (p) => p.clientId === requestedClientId || p.clientId === `CL-${requestedClientId}`
+      );
+    }
   }
 
   if (status) {
@@ -23,7 +39,7 @@ export async function GET(request: Request) {
     projects = projects.filter((p) => p.priority === priority);
   }
 
-  // Attach linked invoices and files to each project for rich UI displays
+  // Attach linked invoices and files to each project
   const enriched = projects.map((proj) => {
     const projectFiles = db.files.filter((f) => f.projectId === proj.id);
     const projectInvoices = db.invoices.filter((i) => i.projectId === proj.id);
@@ -41,17 +57,36 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+    if (session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: Admin privilege required to create projects' }, { status: 403 });
+    }
+
     const body = await request.json();
     const db = getDatabase();
 
-    const client = db.clients.find((c) => c.id === body.clientId);
+    // Data integrity: Reject any save with empty clientId on the server
+    if (!body.clientId || typeof body.clientId !== 'string' || body.clientId.trim() === '') {
+      return NextResponse.json(
+        { error: 'Client selection is required. Please select a valid client.' },
+        { status: 400 }
+      );
+    }
+
+    const client = db.clients.find((c) => c.id === body.clientId || c.clientId === body.clientId);
+    if (!client) {
+      return NextResponse.json({ error: 'Selected client does not exist in the database.' }, { status: 400 });
+    }
 
     const newProject: Project = {
       id: `proj_${Date.now()}`,
-      title: body.title || 'Untitled Creative Project',
-      clientId: body.clientId,
-      clientName: client ? client.name : body.clientName || 'Client',
-      clientCompany: client ? client.companyName : body.clientCompany || 'Company',
+      title: (body.title || 'Untitled Creative Project').trim(),
+      clientId: client.id,
+      clientName: client.name,
+      clientCompany: client.companyName,
       type: body.type || 'Social Media Creatives',
       description: body.description || '',
       referenceLinks: body.referenceLinks || [],
@@ -78,8 +113,8 @@ export async function POST(request: Request) {
     saveDatabase(db);
 
     recordActivity({
-      userId: 'user_admin',
-      userName: 'Sourav Roy',
+      userId: session.userId,
+      userName: session.name,
       userRole: 'ADMIN',
       action: 'Project Created',
       details: `Created project "${newProject.title}" for ${newProject.clientCompany}`,
@@ -100,4 +135,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: err.message || 'Failed to create project' }, { status: 500 });
   }
 }
-

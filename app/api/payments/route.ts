@@ -1,18 +1,34 @@
 import { NextResponse } from 'next/server';
 import { getDatabase, saveDatabase, recordActivity, addNotification } from '@/lib/db';
+import { getSessionFromRequest } from '@/lib/auth-server';
 import { Payment } from '@/types';
 
 export async function GET(request: Request) {
+  const session = await getSessionFromRequest(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
-  const clientId = searchParams.get('clientId');
+  const requestedClientId = searchParams.get('clientId');
   const invoiceId = searchParams.get('invoiceId');
   const mode = searchParams.get('mode');
 
   const db = getDatabase();
   let payments = [...db.payments];
 
-  if (clientId) {
-    payments = payments.filter((p) => p.clientId === clientId);
+  // Scoping: Clients only see their own payments
+  if (session.role === 'CLIENT') {
+    payments = payments.filter(
+      (p) => p.clientId === session.userId || p.clientId === session.clientId
+    );
+  } else {
+    // Admin filtering
+    if (requestedClientId) {
+      payments = payments.filter(
+        (p) => p.clientId === requestedClientId || p.clientId === `CL-${requestedClientId}`
+      );
+    }
   }
 
   if (invoiceId) {
@@ -23,39 +39,56 @@ export async function GET(request: Request) {
     payments = payments.filter((p) => p.mode === mode);
   }
 
-  // Financial summary - only consider Completed payments as confirmed received
-  const totalReceived = db.payments
-    .filter((p) => (p.status || 'Completed') === 'Completed')
+  // Sort payment ledger newest first (Task 2 rule)
+  payments.sort((a, b) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime());
+
+  // Financial summary - Count ONLY payments with status Completed (Cleared) in revenue (Task 2 rule)
+  // Rejected and Pending Confirmation payments must NEVER count towards revenue
+  const relevantInvoices =
+    session.role === 'CLIENT'
+      ? db.invoices.filter((i) => i.clientId === session.userId || i.clientId === session.clientId)
+      : db.invoices;
+
+  const relevantPayments =
+    session.role === 'CLIENT'
+      ? db.payments.filter((p) => p.clientId === session.userId || p.clientId === session.clientId)
+      : db.payments;
+
+  const totalReceived = relevantPayments
+    .filter((p) => p.status === 'Completed')
     .reduce((acc, p) => acc + (p.amount || 0), 0);
 
-  const totalPending = db.invoices.reduce((acc, inv) => acc + (inv.balanceDue || 0), 0);
+  const totalPending = relevantInvoices.reduce((acc, inv) => acc + (inv.balanceDue || 0), 0);
 
-  const overdueAmount = db.invoices
+  const overdueAmount = relevantInvoices
     .filter((inv) => inv.status === 'Overdue')
     .reduce((acc, inv) => acc + (inv.balanceDue || 0), 0);
 
-  const pendingConfirmations = db.payments.filter((p) => p.status === 'Pending Confirmation');
+  const pendingConfirmations = relevantPayments.filter((p) => p.status === 'Pending Confirmation');
   const pendingConfirmationsTotal = pendingConfirmations.reduce((acc, p) => acc + (p.amount || 0), 0);
 
-  // Client-wise outstanding breakdown
-  const clientOutstanding = db.clients.map((c) => {
-    const clientInvoices = db.invoices.filter((i) => i.clientId === c.id);
-    const pending = clientInvoices.reduce((acc, inv) => acc + (inv.balanceDue || 0), 0);
-    const paid = clientInvoices.reduce((acc, inv) => acc + (inv.amountPaid || 0), 0);
-    const pendingClientPayments = db.payments.filter(
-      (p) => p.clientId === c.id && p.status === 'Pending Confirmation'
-    );
-    return {
-      clientId: c.id,
-      clientCode: c.clientId,
-      name: c.name,
-      companyName: c.companyName,
-      pending,
-      paid,
-      pendingVerificationCount: pendingClientPayments.length,
-      pendingVerificationAmount: pendingClientPayments.reduce((acc, p) => acc + (p.amount || 0), 0),
-    };
-  });
+  // Client-wise outstanding breakdown (for Admin)
+  const clientOutstanding =
+    session.role === 'ADMIN'
+      ? db.clients.map((c) => {
+          const clientInvoices = db.invoices.filter((i) => i.clientId === c.id || i.clientId === c.clientId);
+          const pending = clientInvoices.reduce((acc, inv) => acc + (inv.balanceDue || 0), 0);
+          const paid = clientInvoices.reduce((acc, inv) => acc + (inv.amountPaid || 0), 0);
+          const pendingClientPayments = db.payments.filter(
+            (p) => (p.clientId === c.id || p.clientId === c.clientId) && p.status === 'Pending Confirmation'
+          );
+          return {
+            clientId: c.id,
+            clientCode: c.clientId,
+            name: c.name,
+            companyName: c.companyName,
+            pending,
+            paid,
+            pendingVerificationCount: pendingClientPayments.length,
+            pendingVerificationAmount: pendingClientPayments.reduce((acc, p) => acc + (p.amount || 0), 0),
+          };
+        })
+      : [];
 
   return NextResponse.json({
     payments,
@@ -72,12 +105,24 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+
     const body = await request.json();
     const db = getDatabase();
 
     const invoice = db.invoices.find((i) => i.id === body.invoiceId);
     if (!invoice) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
+    }
+
+    // Scoping check for client
+    if (session.role === 'CLIENT') {
+      if (invoice.clientId !== session.userId && invoice.clientId !== session.clientId) {
+        return NextResponse.json({ error: 'Forbidden: You cannot pay an invoice that does not belong to you' }, { status: 403 });
+      }
     }
 
     const paymentAmount = Number(body.amount);
@@ -88,7 +133,7 @@ export async function POST(request: Request) {
     const now = new Date();
     const dateStr = body.date || now.toISOString().substring(0, 10);
     const timeStr = body.time || now.toTimeString().substring(0, 8);
-    const isClient = body.recordedByRole === 'CLIENT';
+    const isClient = session.role === 'CLIENT';
 
     const newPayment: Payment = {
       id: `pay_${Date.now()}`,
@@ -106,7 +151,7 @@ export async function POST(request: Request) {
       receiptUrl: body.receiptUrl || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&auto=format&fit=crop&q=80',
       notes: body.notes || (isClient ? 'Client submitted payment request' : 'Payment recorded by Admin'),
       status: isClient ? 'Pending Confirmation' : 'Completed',
-      confirmedBy: isClient ? undefined : (body.recordedByName || 'Sourav Roy (Studio Director)'),
+      confirmedBy: isClient ? undefined : session.name,
       confirmedAt: isClient ? undefined : now.toISOString(),
       createdAt: now.toISOString(),
     };
@@ -115,15 +160,15 @@ export async function POST(request: Request) {
 
     if (isClient) {
       // NOTE: Do NOT deduct invoice balance yet!
-      // It will only be deducted when Admin authenticates and approves it.
+      // Only deducted when Admin authenticates and clears it.
       saveDatabase(db);
 
       recordActivity({
-        userId: body.recordedBy || invoice.clientId,
-        userName: body.recordedByName || invoice.clientName,
+        userId: session.userId,
+        userName: session.name,
         userRole: 'CLIENT',
         action: 'Payment Confirmation Requested',
-        details: `${invoice.clientName} (${invoice.clientCompany}) submitted ₹${paymentAmount.toLocaleString('en-IN')} for ${invoice.invoiceNumber}. Awaiting admin authentication.`,
+        details: `${session.name} (${invoice.clientCompany}) submitted ₹${paymentAmount.toLocaleString('en-IN')} for ${invoice.invoiceNumber}. Awaiting admin authentication.`,
         clientId: invoice.clientId,
         projectId: invoice.projectId,
       });
@@ -160,8 +205,8 @@ export async function POST(request: Request) {
     saveDatabase(db);
 
     recordActivity({
-      userId: body.recordedBy || 'user_admin',
-      userName: body.recordedByName || 'Sourav Roy',
+      userId: session.userId,
+      userName: session.name,
       userRole: 'ADMIN',
       action: 'Payment Recorded',
       details: `Recorded ₹${paymentAmount.toLocaleString('en-IN')} payment for ${invoice.invoiceNumber} (${body.mode || 'UPI'})`,
@@ -185,6 +230,14 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const session = await getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+    if (session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: Only admin can authenticate or reject payments' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { paymentId, action } = body; // action: 'approve' | 'reject'
     const db = getDatabase();
@@ -199,79 +252,90 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
 
-    const now = new Date();
-
     if (action === 'approve') {
       payment.status = 'Completed';
-      payment.confirmedBy = body.adminName || 'Sourav Roy (Studio Director)';
-      payment.confirmedAt = now.toISOString();
+      payment.confirmedBy = session.name;
+      payment.confirmedAt = new Date().toISOString();
 
-      // NOW deduct the balance and complete the pending amount!
+      // Deduct balance from invoice now
       const newAmountPaid = (invoice.amountPaid || 0) + payment.amount;
       const newBalanceDue = Math.max(0, invoice.total - newAmountPaid);
-
       invoice.amountPaid = newAmountPaid;
       invoice.balanceDue = newBalanceDue;
 
       if (newBalanceDue === 0) {
         invoice.status = 'Paid';
-      } else {
+        // Unlock files automatically when linked invoice is Paid (Task 2 rule)
+        db.files.forEach((f) => {
+          if (f.projectId === invoice.projectId || f.clientId === invoice.clientId) {
+            f.downloadAllowed = true;
+            f.isWatermarked = false;
+          }
+        });
+      } else if (newAmountPaid > 0) {
         invoice.status = 'Partially Paid';
       }
 
       saveDatabase(db);
 
       recordActivity({
-        userId: 'user_admin',
-        userName: body.adminName || 'Sourav Roy',
+        userId: session.userId,
+        userName: session.name,
         userRole: 'ADMIN',
-        action: 'Payment Authenticated',
-        details: `Authenticated & confirmed payment of ₹${payment.amount.toLocaleString('en-IN')} for ${invoice.invoiceNumber} (${payment.clientCompany})`,
+        action: 'Payment Authenticated & Approved',
+        details: `Authenticated client payment of ₹${payment.amount.toLocaleString('en-IN')} for ${invoice.invoiceNumber}. Remaining balance: ₹${newBalanceDue.toLocaleString('en-IN')}`,
         clientId: invoice.clientId,
         projectId: invoice.projectId,
       });
 
       addNotification({
-        recipientId: payment.clientId,
-        title: 'Payment Confirmed & Authenticated! ✅',
-        message: `Your payment of ₹${payment.amount.toLocaleString('en-IN')} for ${invoice.invoiceNumber} has been authenticated by Studio Director Sourav Roy. Balance updated.`,
+        recipientId: invoice.clientId,
+        title: 'Payment Confirmed! ✅',
+        message: `Your payment of ₹${payment.amount.toLocaleString('en-IN')} for invoice ${invoice.invoiceNumber} has been authenticated by Studio Admin.`,
         type: 'payment',
-        link: `/portal/invoices`,
+        link: `/portal/invoices?id=${invoice.id}`,
       });
 
       return NextResponse.json({
         success: true,
+        message: 'Payment verified, authenticated, and invoice balance updated.',
         payment,
         invoice,
-        message: 'Payment successfully authenticated and invoice updated.',
       });
     } else if (action === 'reject') {
       payment.status = 'Rejected';
+      payment.confirmedBy = `${session.name} (Rejected)`;
+      payment.confirmedAt = new Date().toISOString();
       saveDatabase(db);
 
       recordActivity({
-        userId: 'user_admin',
-        userName: body.adminName || 'Sourav Roy',
+        userId: session.userId,
+        userName: session.name,
         userRole: 'ADMIN',
-        action: 'Payment Rejected',
-        details: `Rejected unverified payment submission of ₹${payment.amount.toLocaleString('en-IN')} for ${invoice.invoiceNumber}`,
+        action: 'Payment Request Rejected',
+        details: `Admin rejected payment request of ₹${payment.amount.toLocaleString('en-IN')} for ${invoice.invoiceNumber}`,
         clientId: invoice.clientId,
         projectId: invoice.projectId,
       });
 
       addNotification({
-        recipientId: payment.clientId,
-        title: 'Payment Verification Notice ⚠️',
-        message: `Your payment submission of ₹${payment.amount.toLocaleString('en-IN')} for ${invoice.invoiceNumber} (Ref: ${payment.transactionRef}) could not be verified. Please check UTR or contact admin.`,
+        recipientId: invoice.clientId,
+        title: 'Payment Verification Unsuccessful ⚠️',
+        message: `Your payment request of ₹${payment.amount.toLocaleString('en-IN')} for invoice ${invoice.invoiceNumber} could not be verified. Please check with your bank or re-submit.`,
         type: 'payment',
-        link: `/portal/invoices`,
+        link: `/portal/invoices?id=${invoice.id}`,
       });
 
-      return NextResponse.json({ success: true, payment });
+      return NextResponse.json({
+        success: true,
+        message: 'Payment request marked as rejected.',
+        payment,
+        invoice,
+      });
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to authenticate payment' }, { status: 500 });
+    return NextResponse.json({ error: err.message || 'Failed to update payment' }, { status: 500 });
   }
 }

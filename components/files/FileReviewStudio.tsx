@@ -561,7 +561,7 @@ export default function FileReviewStudio({
           <div className="flex items-center gap-3">
             {file.downloadAllowed ? (
               <a
-                href={activeVersion.fileUrl}
+                href={`/api/files/${file.id}/access?action=download`}
                 target="_blank"
                 rel="noreferrer"
                 download
@@ -586,11 +586,21 @@ export default function FileReviewStudio({
             </button>
 
             <button
+              disabled={file.status === 'Changes Requested'}
               onClick={handleApproveClick}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-emerald-600/25 hover:bg-emerald-500 hover:scale-[1.02] transition-all"
+              title={
+                file.status === 'Changes Requested'
+                  ? 'Approve is locked while changes are requested. A new version must be uploaded or changes resolved.'
+                  : 'Approve Artwork'
+              }
+              className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-md transition-all ${
+                file.status === 'Changes Requested'
+                  ? 'bg-zinc-400 dark:bg-zinc-700 opacity-60 cursor-not-allowed shadow-none'
+                  : 'bg-emerald-600 shadow-emerald-600/25 hover:bg-emerald-500 hover:scale-[1.02]'
+              }`}
             >
               <CheckCircle2 className="h-4 w-4" />
-              <span>Approve Artwork</span>
+              <span>{file.status === 'Changes Requested' ? 'Approval Locked (Changes Open)' : 'Approve Artwork'}</span>
             </button>
           </div>
         </div>

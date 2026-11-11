@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/db';
+import { getSessionFromRequest } from '@/lib/auth-server';
 import { z } from 'zod';
 
 export const runtime = 'nodejs';
@@ -146,6 +147,14 @@ const tools = {
 
 export async function POST(req: Request) {
   try {
+    const session = await getSessionFromRequest(req);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+    if (session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: Admin privilege required' }, { status: 403 });
+    }
+
     const { message, history = [] } = await req.json();
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });

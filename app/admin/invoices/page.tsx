@@ -133,6 +133,7 @@ export default function InvoicesPage() {
 
         <button
           onClick={() => {
+            loadInvoices(); // Refetch clients and projects whenever form opens
             setEditingInvoice(null);
             setIsModalOpen(true);
           }}

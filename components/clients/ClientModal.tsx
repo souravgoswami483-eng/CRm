@@ -28,7 +28,6 @@ export default function ClientModal({
   const [source, setSource] = useState<any>(initialData?.source || 'Instagram');
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [tag, setTag] = useState<any>(initialData?.tags?.[0] || 'VIP');
-  const [tempPassword, setTempPassword] = useState(initialData?.tempPassword || 'client2026');
   const [logo, setLogo] = useState(
     initialData?.logo ||
       'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80'
@@ -54,7 +53,6 @@ export default function ClientModal({
         notes,
         tags: [tag],
         logo,
-        tempPassword,
       });
       onClose();
     } catch (err) {
@@ -219,15 +217,12 @@ export default function ClientModal({
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Temporary Portal Password
+                Portal Security & Access
               </label>
-              <input
-                type="text"
-                value={tempPassword}
-                onChange={(e) => setTempPassword(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-cyan-700 dark:text-cyan-300 font-mono outline-none focus:border-cyan-500"
-              />
+              <div className="rounded-xl border border-dashed border-emerald-500/40 bg-emerald-50/50 dark:bg-emerald-950/20 px-3 py-2 text-[11px] text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Auto-generated one-time password will be shown upon creation.</span>
+              </div>
             </div>
           </div>
 

@@ -10,6 +10,7 @@ export interface User {
   avatar?: string;
   twoFactorEnabled?: boolean;
   mustChangePassword?: boolean;
+  passwordHash?: string;
 }
 
 export interface Client {
@@ -30,7 +31,8 @@ export interface Client {
   dateAdded: string;
   lastLogin?: string;
   status: 'Active' | 'Inactive';
-  tempPassword?: string;
+  passwordHash?: string;
+  mustChangePassword?: boolean;
 }
 
 export type ProjectStatus =

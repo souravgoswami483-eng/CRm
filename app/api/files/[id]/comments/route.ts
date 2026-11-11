@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase, saveDatabase, recordActivity, addNotification } from '@/lib/db';
+import { getSessionFromRequest } from '@/lib/auth-server';
 import { FileComment } from '@/types';
 
 export async function POST(
@@ -7,6 +8,11 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+
     const body = await request.json();
     const db = getDatabase();
     const file = db.files.find((f) => f.id === params.id);
@@ -15,13 +21,19 @@ export async function POST(
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
+    if (session.role === 'CLIENT') {
+      if (file.clientId !== session.userId && file.clientId !== session.clientId) {
+        return NextResponse.json({ error: 'Forbidden: Access denied' }, { status: 403 });
+      }
+    }
+
     const newComment: FileComment = {
       id: `comm_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       fileId: file.id,
-      userId: body.userId || 'user_client',
-      userName: body.userName || 'Client',
-      userRole: body.userRole || 'CLIENT',
-      content: body.content || '',
+      userId: session.userId,
+      userName: session.name,
+      userRole: session.role,
+      content: (body.content || '').trim(),
       timestampSeconds: body.timestampSeconds !== undefined ? Number(body.timestampSeconds) : undefined,
       pinCoordinates: body.pinCoordinates
         ? {
@@ -50,23 +62,23 @@ export async function POST(
     }
 
     recordActivity({
-      userId: newComment.userId,
-      userName: newComment.userName,
-      userRole: newComment.userRole,
+      userId: session.userId,
+      userName: session.name,
+      userRole: session.role,
       action: newComment.pinCoordinates ? 'Pinned Comment' : newComment.timestampSeconds !== undefined ? 'Video Timestamp Feedback' : 'File Comment',
-      details: `${newComment.userName}: "${newComment.content.substring(0, 80)}"`,
+      details: `${session.name}: "${newComment.content.substring(0, 80)}"`,
       clientId: file.clientId,
       projectId: file.projectId,
     });
 
     // Notify the other party
-    const isClient = newComment.userRole === 'CLIENT';
+    const isClient = session.role === 'CLIENT';
     addNotification({
       recipientId: isClient ? 'ADMIN' : file.clientId,
       title: isClient ? 'New Feedback From Client' : 'Studio Designer Responded',
-      message: `${newComment.userName}: "${newComment.content.substring(0, 60)}"`,
+      message: `${session.name}: "${newComment.content.substring(0, 60)}"`,
       type: 'comment',
-      link: isClient ? `/admin/files?id=${file.id}` : `/portal/files?id=${file.id}`,
+      link: isClient ? `/admin/files?id=${file.id}` : `/portal/review`,
     });
 
     return NextResponse.json({ success: true, comment: newComment });
@@ -80,6 +92,11 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const session = await getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+
     const body = await request.json();
     const db = getDatabase();
     const file = db.files.find((f) => f.id === params.id);
@@ -103,4 +120,3 @@ export async function PUT(
     return NextResponse.json({ error: err.message || 'Failed to update comment' }, { status: 500 });
   }
 }
-

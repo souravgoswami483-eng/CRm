@@ -9,10 +9,11 @@ interface AuthContextType {
   theme: 'dark' | 'light';
   settings: StudioSettings | null;
   login: (userData: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   toggleTheme: () => void;
   quickSwitchUser: (type: 'admin' | 'client1' | 'client2' | 'client3') => void;
   refreshSettings: () => Promise<void>;
+  checkSession: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,50 +22,12 @@ const AuthContext = createContext<AuthContextType>({
   theme: 'dark',
   settings: null,
   login: () => {},
-  logout: () => {},
+  logout: async () => {},
   toggleTheme: () => {},
   quickSwitchUser: () => {},
   refreshSettings: async () => {},
+  checkSession: async () => null,
 });
-
-export const DEMO_ADMIN: User = {
-  id: 'user_admin',
-  role: 'ADMIN',
-  name: 'Sourav Roy',
-  email: 'admin@studiovortex.com',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-  twoFactorEnabled: false,
-};
-
-export const DEMO_CLIENTS: Record<string, User> = {
-  client1: {
-    id: 'client_1',
-    clientId: 'CL-2026-0042',
-    role: 'CLIENT',
-    name: 'Alex Rivers',
-    companyName: 'Zenith Techworks',
-    email: 'alex@zenithtech.io',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
-  },
-  client2: {
-    id: 'client_2',
-    clientId: 'CL-2026-0089',
-    role: 'CLIENT',
-    name: 'Priya Sharma',
-    companyName: 'Lumina Fashion Studio',
-    email: 'priya@luminafashion.in',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
-  },
-  client3: {
-    id: 'client_3',
-    clientId: 'CL-2026-0104',
-    role: 'CLIENT',
-    name: 'Marcus Vance',
-    companyName: 'Pulse Energy Drink',
-    email: 'marcus@pulseenergy.com',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-  },
-};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -84,22 +47,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  useEffect(() => {
-    // Restore user session
-    const savedUser = localStorage.getItem('vortex_user');
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error('Failed to parse saved user', e);
-        setUser(null);
-        localStorage.removeItem('vortex_user');
+  const checkSession = async (): Promise<User | null> => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          setUser(data.user);
+          localStorage.setItem('vortex_user', JSON.stringify(data.user));
+          return data.user;
+        }
       }
-    } else {
+      // If unauthorized or error, clear user state
       setUser(null);
+      localStorage.removeItem('vortex_user');
+      return null;
+    } catch {
+      setUser(null);
+      localStorage.removeItem('vortex_user');
+      return null;
     }
+  };
 
-    // Restore theme
+  useEffect(() => {
+    // 1. Restore theme
     const savedTheme = localStorage.getItem('vortex_theme') as 'dark' | 'light';
     if (savedTheme) {
       setTheme(savedTheme);
@@ -115,8 +86,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('light');
     }
 
-    refreshSettings();
-    setLoading(false);
+    // 2. Validate real server session
+    checkSession().finally(() => {
+      refreshSettings();
+      setLoading(false);
+    });
   }, []);
 
   const login = (userData: User) => {
@@ -124,9 +98,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('vortex_user', JSON.stringify(userData));
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('vortex_user');
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Error logging out', err);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('vortex_user');
+      window.location.href = '/login';
+    }
   };
 
   const toggleTheme = () => {
@@ -142,12 +123,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const quickSwitchUser = (type: 'admin' | 'client1' | 'client2' | 'client3') => {
-    if (type === 'admin') {
-      login(DEMO_ADMIN);
-    } else {
-      login(DEMO_CLIENTS[type]);
-    }
+  const quickSwitchUser = () => {
+    // Quick switch disabled per security requirements
+    console.warn('Quick switch is disabled for security.');
   };
 
   return (
@@ -162,6 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toggleTheme,
         quickSwitchUser,
         refreshSettings,
+        checkSession,
       }}
     >
       {children}
@@ -170,4 +149,3 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
-

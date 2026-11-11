@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getDatabase, saveDatabase, recordActivity, addNotification } from '@/lib/db';
-import { Client } from '@/types';
+import { getDatabase, saveDatabase, recordActivity, addNotification, sanitizeClient } from '@/lib/db';
+import { getSessionFromRequest, generateOneTimePassword, hashPassword } from '@/lib/auth-server';
+import { Client, User } from '@/types';
 
 export async function GET(request: Request) {
+  const session = await getSessionFromRequest(request);
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+  }
+
+  // Only Admin is allowed to list all clients
+  if (session.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Forbidden: Admin privilege required' }, { status: 403 });
+  }
+
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q')?.toLowerCase() || '';
   const status = searchParams.get('status') || '';
@@ -29,16 +40,22 @@ export async function GET(request: Request) {
     clients = clients.filter((c) => c.tags.includes(tag as any));
   }
 
-  // Calculate client financial totals dynamically
+  // Calculate client financial totals dynamically, and strictly SANITIZE (no passwords)
   const clientsWithStats = clients.map((client) => {
-    const clientInvoices = db.invoices.filter((i) => i.clientId === client.id);
+    const clientInvoices = db.invoices.filter(
+      (i) => i.clientId === client.id || i.clientId === client.clientId
+    );
     const totalBilled = clientInvoices.reduce((acc, inv) => acc + (inv.total || 0), 0);
     const totalPaid = clientInvoices.reduce((acc, inv) => acc + (inv.amountPaid || 0), 0);
     const balanceDue = clientInvoices.reduce((acc, inv) => acc + (inv.balanceDue || 0), 0);
-    const projectCount = db.projects.filter((p) => p.clientId === client.id).length;
+    const projectCount = db.projects.filter(
+      (p) => p.clientId === client.id || p.clientId === client.clientId
+    ).length;
+
+    const sanitized = sanitizeClient(client);
 
     return {
-      ...client,
+      ...sanitized,
       totalBilled,
       totalPaid,
       balanceDue,
@@ -51,7 +68,22 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized: Session required' }, { status: 401 });
+    }
+    if (session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: Admin privilege required' }, { status: 403 });
+    }
+
     const body = await request.json();
+    if (!body.name || !body.email || !body.companyName) {
+      return NextResponse.json(
+        { error: 'Client name, company name, and email are required.' },
+        { status: 400 }
+      );
+    }
+
     const db = getDatabase();
 
     // Auto-generate unique Client ID: CL-2026-XXXX
@@ -59,13 +91,17 @@ export async function POST(request: Request) {
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
     const generatedClientId = `CL-${year}-${randomDigits}`;
 
+    // Generate random one-time password
+    const oneTimePassword = generateOneTimePassword();
+    const passwordHash = hashPassword(oneTimePassword);
+
     const newClient: Client = {
       id: `client_${Date.now()}`,
       clientId: generatedClientId,
-      name: body.name || 'New Client',
-      companyName: body.companyName || 'Studio Partner',
+      name: body.name.trim(),
+      companyName: body.companyName.trim(),
       logo: body.logo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      email: body.email,
+      email: body.email.trim().toLowerCase(),
       phone: body.phone || '',
       whatsapp: body.whatsapp || body.phone || '',
       address: body.address || '',
@@ -76,15 +112,30 @@ export async function POST(request: Request) {
       tags: body.tags && body.tags.length > 0 ? body.tags : ['One-time'],
       dateAdded: new Date().toISOString().substring(0, 10),
       status: 'Active',
-      tempPassword: body.tempPassword || `client${Math.floor(100 + Math.random() * 900)}`,
+      passwordHash,
+      mustChangePassword: true,
+    };
+
+    // Also register user representation
+    const newUser: User = {
+      id: `user_${newClient.id}`,
+      role: 'CLIENT',
+      name: newClient.name,
+      email: newClient.email,
+      clientId: newClient.clientId,
+      companyName: newClient.companyName,
+      avatar: newClient.logo,
+      mustChangePassword: true,
+      passwordHash,
     };
 
     db.clients.unshift(newClient);
+    db.users.push(newUser);
     saveDatabase(db);
 
     recordActivity({
-      userId: 'user_admin',
-      userName: 'Sourav Roy',
+      userId: session.userId,
+      userName: session.name,
       userRole: 'ADMIN',
       action: 'Client Created',
       details: `Created new client: ${newClient.name} (${newClient.companyName}) with ID ${newClient.clientId}`,
@@ -99,9 +150,12 @@ export async function POST(request: Request) {
       link: `/admin/clients`,
     });
 
-    return NextResponse.json({ success: true, client: newClient });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Failed to create client' }, { status: 500 });
+    // Return the sanitized client, with oneTimePassword ONLY shown once on creation
+    return NextResponse.json({
+      client: sanitizeClient(newClient),
+      oneTimePassword,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to create client' }, { status: 500 });
   }
 }
-
