@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDatabase, saveDatabase, recordActivity, addNotification, sanitizeClient } from '@/lib/db';
 import { getSessionFromRequest, generateOneTimePassword, hashPassword } from '@/lib/auth-server';
+import { isValidEmail, isValidPhone, isValidGSTIN, isValidName } from '@/lib/validators';
 import { Client, User } from '@/types';
 
 export async function GET(request: Request) {
@@ -77,11 +78,20 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    if (!body.name || !body.email || !body.companyName) {
-      return NextResponse.json(
-        { error: 'Client name, company name, and email are required.' },
-        { status: 400 }
-      );
+    if (!isValidName(body.name, 2)) {
+      return NextResponse.json({ error: 'Client contact person name must be at least 2 characters.' }, { status: 400 });
+    }
+    if (!isValidName(body.companyName, 2)) {
+      return NextResponse.json({ error: 'Brand / company name must be at least 2 characters.' }, { status: 400 });
+    }
+    if (!isValidEmail(body.email)) {
+      return NextResponse.json({ error: 'Please enter a valid email address (e.g. client@company.com).' }, { status: 400 });
+    }
+    if (!isValidPhone(body.phone)) {
+      return NextResponse.json({ error: 'Please enter a valid phone number (digits only, e.g. +91 98765 43210).' }, { status: 400 });
+    }
+    if (body.gstin && !isValidGSTIN(body.gstin)) {
+      return NextResponse.json({ error: 'Invalid GSTIN format (must be 15 alphanumeric characters).' }, { status: 400 });
     }
 
     const db = getDatabase();

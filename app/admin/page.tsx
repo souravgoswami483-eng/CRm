@@ -83,15 +83,25 @@ export default function AdminDashboardPage() {
     .reduce((acc, p) => acc + (p.amount || 0), 0);
 
   const totalPending = invoices.reduce((acc, i) => acc + (i.balanceDue || 0), 0);
-  const overdueInvoices = invoices.filter((i) => i.status === 'Overdue');
+  const today = new Date();
+  const todayStr = today.toISOString().substring(0, 10);
+  const overdueInvoices = invoices.filter(
+    (i) =>
+      i.status === 'Overdue' ||
+      (i.dueDate &&
+        i.dueDate < todayStr &&
+        (i.balanceDue || 0) > 0 &&
+        i.status !== 'Paid' &&
+        i.status !== 'Draft' &&
+        i.status !== 'Cancelled')
+  );
   const overdueAmount = overdueInvoices.reduce((acc, i) => acc + (i.balanceDue || 0), 0);
 
   // Calculate max days overdue
-  const today = new Date();
   let maxDaysOverdue = 0;
   overdueInvoices.forEach((inv) => {
     if (inv.dueDate) {
-      const diffDays = Math.max(0, Math.floor((today.getTime() - new Date(inv.dueDate).getTime()) / (1000 * 60 * 60 * 24)));
+      const diffDays = Math.max(1, Math.floor((today.getTime() - new Date(inv.dueDate).getTime()) / (1000 * 60 * 60 * 24)));
       if (diffDays > maxDaysOverdue) maxDaysOverdue = diffDays;
     }
   });

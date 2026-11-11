@@ -39,11 +39,11 @@ export default function StatCards({ stats }: StatCardsProps) {
           </div>
         </div>
         <div className="mt-3 text-2xl lg:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
-          ₹{stats.totalRevenueAllTime.toLocaleString('en-IN')}
+          ₹{(stats.totalRevenueAllTime || 0).toLocaleString('en-IN')}
         </div>
         <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800/80 pt-2">
-          <span>This month: <strong className="text-zinc-800 dark:text-zinc-200">₹{stats.totalRevenueThisMonth.toLocaleString('en-IN')}</strong></span>
-          <span>YTD: <strong className="text-violet-600 dark:text-violet-300">₹{stats.totalRevenueThisYear.toLocaleString('en-IN')}</strong></span>
+          <span>This month: <strong className="text-zinc-800 dark:text-zinc-200">₹{(stats.totalRevenueThisMonth || 0).toLocaleString('en-IN')}</strong></span>
+          <span>YTD: <strong className="text-violet-600 dark:text-violet-300">₹{(stats.totalRevenueThisYear || 0).toLocaleString('en-IN')}</strong></span>
         </div>
       </div>
 
@@ -58,7 +58,7 @@ export default function StatCards({ stats }: StatCardsProps) {
           </div>
         </div>
         <div className="mt-3 text-2xl lg:text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
-          ₹{stats.totalPending.toLocaleString('en-IN')}
+          ₹{(stats.totalPending || 0).toLocaleString('en-IN')}
         </div>
         <div className="mt-2 flex items-center gap-1.5 text-[11px] text-amber-700 dark:text-amber-400/90 border-t border-zinc-200 dark:border-zinc-800/80 pt-2 font-medium">
           <span>Awaiting invoice settlement from clients</span>
@@ -77,12 +77,12 @@ export default function StatCards({ stats }: StatCardsProps) {
           </div>
         </div>
         <div className="mt-3 text-2xl lg:text-3xl font-black tracking-tight text-rose-600 dark:text-rose-300">
-          ₹{stats.overdueAmount.toLocaleString('en-IN')}
+          ₹{(stats.overdueAmount || 0).toLocaleString('en-IN')}
         </div>
         <div className="mt-2 flex items-center justify-between text-[11px] text-rose-600 dark:text-rose-400 border-t border-zinc-200 dark:border-zinc-800/80 pt-2">
-          <span className="font-bold">{stats.overdueCount} invoice overdue</span>
+          <span className="font-bold">{stats.overdueCount || 0} invoice overdue</span>
           <span className="bg-rose-100 dark:bg-rose-950 border border-rose-200 dark:border-rose-800/60 px-1.5 py-0.5 rounded text-[10px] text-rose-800 dark:text-rose-200 font-bold">
-            {stats.maxDaysOverdue} days overdue
+            {stats.maxDaysOverdue || 0} days overdue
           </span>
         </div>
       </div>

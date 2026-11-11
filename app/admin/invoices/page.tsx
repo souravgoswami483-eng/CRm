@@ -86,7 +86,7 @@ export default function InvoicesPage() {
   // WhatsApp share link
   const handleWhatsAppShare = (inv: Invoice) => {
     const text = encodeURIComponent(
-      `Hello ${inv.clientName},\n\nHere is your creative services invoice ${inv.invoiceNumber} from Vortex Creative Labs for ₹${inv.total.toLocaleString('en-IN')}.\nDue Date: ${inv.dueDate}.\n\nPlease let us know once settled!\n\nBest,\nSourav Roy (Vortex Creative)`
+      `Hello ${inv.clientName},\n\nHere is your creative services invoice ${inv.invoiceNumber} from Vortex Creative Labs for ₹${(inv.total || 0).toLocaleString('en-IN')}.\nDue Date: ${inv.dueDate}.\n\nPlease let us know once settled!\n\nBest,\nSourav Roy (Vortex Creative)`
     );
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
@@ -110,13 +110,28 @@ export default function InvoicesPage() {
     }
   };
 
-  const filteredInvoices = invoices.filter((i) => {
-    const matchesSearch =
-      i.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      i.clientCompany.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      i.clientName.toLowerCase().includes(searchQuery.toLowerCase());
+  const todayStr = new Date().toISOString().substring(0, 10);
 
-    const matchesStatus = !statusFilter || i.status === statusFilter;
+  const filteredInvoices = invoices.filter((i) => {
+    const invNum = i.invoiceNumber || '';
+    const comp = i.clientCompany || '';
+    const name = i.clientName || '';
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      invNum.toLowerCase().includes(q) ||
+      comp.toLowerCase().includes(q) ||
+      name.toLowerCase().includes(q);
+
+    const isOverdue =
+      i.status === 'Overdue' ||
+      (i.dueDate &&
+        i.dueDate < todayStr &&
+        (i.balanceDue || 0) > 0 &&
+        i.status !== 'Paid' &&
+        i.status !== 'Draft' &&
+        i.status !== 'Cancelled');
+
+    const matchesStatus = !statusFilter || (statusFilter === 'Overdue' ? isOverdue : i.status === statusFilter);
     return matchesSearch && matchesStatus;
   });
 
@@ -223,23 +238,28 @@ export default function InvoicesPage() {
                   </td>
 
                   <td className="py-3.5 px-4 font-black text-zinc-900 dark:text-zinc-200">
-                    ₹{inv.total.toLocaleString('en-IN')}
+                    ₹{(inv.total || 0).toLocaleString('en-IN')}
                   </td>
 
                   <td className="py-3.5 px-4">
                     <span
                       className={`font-black ${
-                        inv.balanceDue > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
+                        (inv.balanceDue || 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
                       }`}
                     >
-                      ₹{inv.balanceDue.toLocaleString('en-IN')}
+                      ₹{(inv.balanceDue || 0).toLocaleString('en-IN')}
                     </span>
                   </td>
 
                   <td className="py-3.5 px-4">
-                    <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getStatusBadge(inv.status)}`}>
-                      {inv.status}
-                    </span>
+                    {(() => {
+                      const effectiveStatus = (inv.status === 'Overdue' || (inv.dueDate && inv.dueDate < todayStr && (inv.balanceDue || 0) > 0 && inv.status !== 'Paid' && inv.status !== 'Draft' && inv.status !== 'Cancelled')) ? 'Overdue' : inv.status;
+                      return (
+                        <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getStatusBadge(effectiveStatus)}`}>
+                          {effectiveStatus}
+                        </span>
+                      );
+                    })()}
                   </td>
 
                   <td className="py-3.5 px-4 text-right">

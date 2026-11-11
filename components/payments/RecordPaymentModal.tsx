@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, DollarSign, CheckCircle2 } from 'lucide-react';
+import { X, DollarSign, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Invoice, PaymentMode } from '@/types';
+import { isValidNumber } from '@/lib/validators';
 
 interface RecordPaymentModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export default function RecordPaymentModal({
   preselectedInvoiceId,
 }: RecordPaymentModalProps) {
   const [invoiceId, setInvoiceId] = useState<string>(
-    preselectedInvoiceId || invoices.find((i) => i.balanceDue > 0)?.id || (invoices[0]?.id || '')
+    preselectedInvoiceId || invoices.find((i) => (i.balanceDue || 0) > 0)?.id || (invoices[0]?.id || '')
   );
 
   const selectedInvoice = invoices.find((i) => i.id === invoiceId);
@@ -32,6 +33,7 @@ export default function RecordPaymentModal({
   const [time, setTime] = useState<string>(new Date().toTimeString().substring(0, 8));
   const [notes, setNotes] = useState<string>('');
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   if (!isOpen) return null;
 
@@ -39,13 +41,34 @@ export default function RecordPaymentModal({
     setInvoiceId(id);
     const inv = invoices.find((i) => i.id === id);
     if (inv) {
-      setAmount(inv.balanceDue || inv.total);
+      setAmount(inv.balanceDue || inv.total || 0);
     }
+  };
+
+  const validate = (): boolean => {
+    const errs: { [key: string]: string } = {};
+
+    if (!invoiceId) {
+      errs.invoiceId = 'Please select an invoice.';
+    }
+
+    if (!isValidNumber(amount, 1)) {
+      errs.amount = 'Payment amount must be greater than ₹0.';
+    } else if (selectedInvoice && amount > (selectedInvoice.balanceDue || selectedInvoice.total || 0)) {
+      errs.amount = `Amount cannot exceed the invoice balance of ₹${(selectedInvoice.balanceDue || selectedInvoice.total || 0).toLocaleString('en-IN')}.`;
+    }
+
+    if (transactionRef.trim().length > 0 && transactionRef.trim().length < 3) {
+      errs.transactionRef = 'Transaction reference must be at least 3 characters.';
+    }
+
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || amount <= 0) return;
+    if (!validate()) return;
     setSaving(true);
 
     try {
@@ -54,21 +77,25 @@ export default function RecordPaymentModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           invoiceId,
-          amount,
+          amount: Number(amount),
           mode,
-          transactionRef: transactionRef || `TXN${Date.now().toString().slice(-8)}`,
+          transactionRef: transactionRef.trim() || `TXN${Date.now().toString().slice(-8)}`,
           date,
           time,
-          notes,
+          notes: notes.trim(),
         }),
       });
 
       if (res.ok) {
         onPaymentRecorded();
         onClose();
+      } else {
+        const data = await res.json();
+        setErrors({ general: data.error || 'Failed to record payment' });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setErrors({ general: err.message || 'Network error' });
     } finally {
       setSaving(false);
     }
@@ -97,7 +124,14 @@ export default function RecordPaymentModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        {errors.general && (
+          <div className="mt-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-600 dark:text-rose-400 flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{errors.general}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
               Select Invoice *
@@ -110,7 +144,7 @@ export default function RecordPaymentModal({
             >
               {invoices.map((inv) => (
                 <option key={inv.id} value={inv.id} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">
-                  {inv.invoiceNumber} — {inv.clientCompany} (Pending: ₹{inv.balanceDue.toLocaleString('en-IN')})
+                  {inv.invoiceNumber} — {inv.clientCompany} (Pending: ₹{(inv.balanceDue || 0).toLocaleString('en-IN')})
                 </option>
               ))}
             </select>
@@ -124,12 +158,22 @@ export default function RecordPaymentModal({
               <input
                 type="number"
                 min={1}
-                max={selectedInvoice?.balanceDue || 1000000}
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs font-bold text-zinc-900 dark:text-white outline-none focus:border-emerald-500"
+                onChange={(e) => {
+                  setAmount(Number(e.target.value));
+                  setErrors((prev) => ({ ...prev, amount: '' }));
+                }}
+                className={`w-full rounded-xl border px-3 py-2 text-xs font-bold text-zinc-900 dark:text-white outline-none transition-all ${
+                  errors.amount
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-emerald-500'
+                }`}
               />
+              {errors.amount && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 shrink-0 inline" /> {errors.amount}
+                </p>
+              )}
             </div>
 
             <div>
@@ -160,15 +204,27 @@ export default function RecordPaymentModal({
               type="text"
               placeholder="e.g. UPI/402847291038 or NEFT-HDFC-9938"
               value={transactionRef}
-              onChange={(e) => setTransactionRef(e.target.value)}
-              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs font-mono text-zinc-900 dark:text-white outline-none focus:border-emerald-500"
+              onChange={(e) => {
+                setTransactionRef(e.target.value);
+                setErrors((prev) => ({ ...prev, transactionRef: '' }));
+              }}
+              className={`w-full rounded-xl border px-3 py-2 text-xs font-mono text-zinc-900 dark:text-white outline-none transition-all ${
+                errors.transactionRef
+                  ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                  : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-emerald-500'
+              }`}
             />
+            {errors.transactionRef && (
+              <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                <AlertCircle className="h-3 w-3 shrink-0 inline" /> {errors.transactionRef}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Receipt Date
+                Payment Date
               </label>
               <input
                 type="date"
@@ -180,27 +236,27 @@ export default function RecordPaymentModal({
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Receipt Time
+                Timestamp (IST)
               </label>
               <input
-                type="text"
+                type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs font-mono text-zinc-900 dark:text-white outline-none"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none"
               />
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-              Payment Remarks & Note
+              Settlement Notes & Remittance Details
             </label>
-            <input
-              type="text"
-              placeholder="e.g. 50% milestone advance payment cleared"
+            <textarea
+              rows={2}
+              placeholder="e.g. Received via client direct IMPS reference 99281..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-emerald-500 resize-none"
             />
           </div>
 
@@ -215,9 +271,10 @@ export default function RecordPaymentModal({
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-500 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2 text-xs font-bold text-white shadow-lg shadow-emerald-600/30 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50"
             >
-              {saving ? 'Recording...' : 'Credit Payment'}
+              <CheckCircle2 className="h-4 w-4" />
+              <span>{saving ? 'Recording Settlement...' : 'Record Payment Cleared'}</span>
             </button>
           </div>
         </form>

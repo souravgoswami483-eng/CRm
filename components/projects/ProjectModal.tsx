@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, FolderPlus, FolderKanban } from 'lucide-react';
+import { X, FolderKanban, AlertCircle } from 'lucide-react';
 import { Project, ProjectPriority, ProjectType, ProjectStatus, Client } from '@/types';
+import { isValidName, isValidNumber } from '@/lib/validators';
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -40,6 +41,10 @@ export default function ProjectModal({
   const [quotedAmount, setQuotedAmount] = useState<number>(initialData?.quotedAmount || 50000);
   const [saving, setSaving] = useState(false);
 
+  // Field validation
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+
   // Synchronize client selection whenever clients list loads or modal opens
   useEffect(() => {
     if (clients.length > 0 && (!clientId || !clients.some((c) => c.id === clientId))) {
@@ -49,12 +54,52 @@ export default function ProjectModal({
 
   if (!isOpen) return null;
 
+  const validateField = (field: string, val: any): string => {
+    switch (field) {
+      case 'title':
+        if (!isValidName(val, 3)) return 'Project title must be at least 3 characters.';
+        return '';
+      case 'clientId':
+        if (!val || String(val).trim() === '') return 'Please select a client for this project.';
+        return '';
+      case 'quotedAmount':
+        if (!isValidNumber(val, 1)) return 'Quoted fee must be greater than ₹0.';
+        return '';
+      case 'deadline':
+        if (startDate && val && val < startDate) return 'Deadline cannot be earlier than project start date.';
+        return '';
+      default:
+        return '';
+    }
+  };
+
+  const handleBlur = (field: string, val: any) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors((prev) => ({ ...prev, [field]: validateField(field, val) }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientId || clientId.trim() === '') {
-      alert('Please select a valid client before saving the project.');
+
+    const newErrors: { [key: string]: string } = {
+      title: validateField('title', title),
+      clientId: validateField('clientId', clientId),
+      quotedAmount: validateField('quotedAmount', quotedAmount),
+      deadline: validateField('deadline', deadline),
+    };
+
+    setTouched({
+      title: true,
+      clientId: true,
+      quotedAmount: true,
+      deadline: true,
+    });
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some(Boolean)) {
       return;
     }
+
     setSaving(true);
     const selectedClient = clients.find((c) => c.id === clientId);
 
@@ -65,19 +110,19 @@ export default function ProjectModal({
 
     try {
       await onSave({
-        title,
+        title: title.trim(),
         clientId,
-        clientName: selectedClient?.name,
-        clientCompany: selectedClient?.companyName,
+        clientName: selectedClient?.name || 'Client',
+        clientCompany: selectedClient?.companyName || 'Company',
         type,
-        description,
+        description: description.trim(),
         referenceLinks: refLinks,
         startDate,
         deadline,
         status,
         priority,
-        revisionsAllowed: Number(revisionsAllowed),
-        quotedAmount: Number(quotedAmount),
+        revisionsAllowed: Math.max(1, Number(revisionsAllowed) || 1),
+        quotedAmount: Math.max(0, Number(quotedAmount) || 0),
       });
       onClose();
     } catch (err) {
@@ -112,7 +157,7 @@ export default function ProjectModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
@@ -122,10 +167,23 @@ export default function ProjectModal({
                 type="text"
                 placeholder="e.g. 9:16 Viral Reels Pack (10 Episodes)"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (touched.title) setErrors((prev) => ({ ...prev, title: validateField('title', e.target.value) }));
+                }}
+                onBlur={() => handleBlur('title', title)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.title && errors.title
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.title && errors.title && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.title}
+                </p>
+              )}
             </div>
 
             <div>
@@ -134,9 +192,16 @@ export default function ProjectModal({
               </label>
               <select
                 value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => {
+                  setClientId(e.target.value);
+                  if (touched.clientId) setErrors((prev) => ({ ...prev, clientId: validateField('clientId', e.target.value) }));
+                }}
+                onBlur={() => handleBlur('clientId', clientId)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.clientId && errors.clientId
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               >
                 {clients.length === 0 ? (
                   <option value="" disabled>Loading clients...</option>
@@ -148,6 +213,12 @@ export default function ProjectModal({
                   ))
                 )}
               </select>
+              {touched.clientId && errors.clientId && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.clientId}
+                </p>
+              )}
             </div>
           </div>
 
@@ -215,7 +286,10 @@ export default function ProjectModal({
               <input
                 type="date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  if (touched.deadline) setErrors((prev) => ({ ...prev, deadline: validateField('deadline', deadline) }));
+                }}
                 className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
               />
             </div>
@@ -227,10 +301,23 @@ export default function ProjectModal({
               <input
                 type="date"
                 value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => {
+                  setDeadline(e.target.value);
+                  if (touched.deadline) setErrors((prev) => ({ ...prev, deadline: validateField('deadline', e.target.value) }));
+                }}
+                onBlur={() => handleBlur('deadline', deadline)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.deadline && errors.deadline
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.deadline && errors.deadline && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.deadline}
+                </p>
+              )}
             </div>
 
             <div>
@@ -242,21 +329,37 @@ export default function ProjectModal({
                 min={1}
                 max={10}
                 value={revisionsAllowed}
-                onChange={(e) => setRevisionsAllowed(Number(e.target.value))}
+                onChange={(e) => setRevisionsAllowed(Math.max(1, Number(e.target.value) || 1))}
                 className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                Quoted Fee (₹)
+                Quoted Fee (₹) *
               </label>
               <input
                 type="number"
+                min={1}
                 value={quotedAmount}
-                onChange={(e) => setQuotedAmount(Number(e.target.value))}
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white font-bold outline-none focus:border-violet-500"
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setQuotedAmount(val);
+                  if (touched.quotedAmount) setErrors((prev) => ({ ...prev, quotedAmount: validateField('quotedAmount', val) }));
+                }}
+                onBlur={() => handleBlur('quotedAmount', quotedAmount)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white font-bold outline-none transition-all ${
+                  touched.quotedAmount && errors.quotedAmount
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.quotedAmount && errors.quotedAmount && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.quotedAmount}
+                </p>
+              )}
             </div>
           </div>
 

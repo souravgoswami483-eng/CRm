@@ -174,7 +174,7 @@ export default function PaymentsPage() {
               </div>
             </div>
             <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">
-              ₹{pendingPayments.reduce((acc, p) => acc + p.amount, 0).toLocaleString('en-IN')} awaiting review
+              ₹{pendingPayments.reduce((acc, p) => acc + (p.amount || 0), 0).toLocaleString('en-IN')} awaiting review
             </span>
           </div>
 
@@ -196,7 +196,7 @@ export default function PaymentsPage() {
                     <div>
                       Amount Submitted:{' '}
                       <strong className="text-emerald-600 dark:text-emerald-400 font-black text-sm">
-                        ₹{p.amount.toLocaleString('en-IN')}
+                        ₹{(p.amount || 0).toLocaleString('en-IN')}
                       </strong>
                     </div>
                     <div>
@@ -302,15 +302,15 @@ export default function PaymentsPage() {
                   <span className="text-zinc-500">Pending Due:</span>
                   <span
                     className={`font-black ${
-                      c.pending > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
+                      (c.pending || 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
                     }`}
                   >
-                    ₹{c.pending.toLocaleString('en-IN')}
+                    ₹{(c.pending || 0).toLocaleString('en-IN')}
                   </span>
                 </div>
                 {c.pendingVerificationCount > 0 && (
                   <div className="mt-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                    ⏳ ₹{c.pendingVerificationAmount.toLocaleString('en-IN')} awaiting authentication
+                    ⏳ ₹{(c.pendingVerificationAmount || 0).toLocaleString('en-IN')} awaiting authentication
                   </div>
                 )}
               </div>
@@ -410,7 +410,7 @@ export default function PaymentsPage() {
                     </td>
 
                     <td className="py-3.5 px-4 font-black text-sm text-emerald-600 dark:text-emerald-400">
-                      ₹{pay.amount.toLocaleString('en-IN')}
+                      ₹{(pay.amount || 0).toLocaleString('en-IN')}
                     </td>
 
                     <td className="py-3.5 px-4">

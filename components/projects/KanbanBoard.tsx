@@ -255,7 +255,7 @@ export default function KanbanBoard({
                     {proj.deadline}
                   </td>
                   <td className="py-3.5 px-4 font-black text-zinc-900 dark:text-zinc-200">
-                    ₹{proj.quotedAmount.toLocaleString('en-IN')}
+                    ₹{(proj.quotedAmount || 0).toLocaleString('en-IN')}
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <button

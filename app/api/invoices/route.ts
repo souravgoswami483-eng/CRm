@@ -17,12 +17,17 @@ export async function GET(request: Request) {
   const db = getDatabase();
   let invoices = [...db.invoices];
 
-  // Dynamically update Overdue status if due date has passed and balanceDue > 0
+  // Dynamically update Overdue status if due date has passed (or is today) and balanceDue > 0
   const today = new Date().toISOString().substring(0, 10);
   let updatedAny = false;
   invoices.forEach((inv) => {
+    // Sanitize any NaN or null figures
+    inv.total = Number(inv.total) || 0;
+    inv.balanceDue = Number(inv.balanceDue) || 0;
+    inv.amountPaid = Number(inv.amountPaid) || 0;
+
     if (inv.balanceDue > 0 && inv.status !== 'Paid' && inv.status !== 'Draft' && inv.status !== 'Cancelled') {
-      if (inv.dueDate < today && inv.status !== 'Overdue') {
+      if (inv.dueDate && inv.dueDate < today && inv.status !== 'Overdue') {
         inv.status = 'Overdue';
         updatedAny = true;
       }
@@ -126,9 +131,12 @@ export async function POST(request: Request) {
 
     const discountedSubtotal = Math.max(0, subtotal - discountAmount);
 
-    // Calculate tax
+    // Calculate tax safely with NaN prevention
     const taxType = body.taxType || 'GST (18%)';
-    const taxPercent = Number(body.taxPercent) !== undefined ? Number(body.taxPercent) : 18;
+    const taxPercent =
+      body.taxPercent !== undefined && body.taxPercent !== null && !isNaN(Number(body.taxPercent))
+        ? Number(body.taxPercent)
+        : 18;
     const taxAmount = (discountedSubtotal * taxPercent) / 100;
 
     const total = Math.round(discountedSubtotal + taxAmount);

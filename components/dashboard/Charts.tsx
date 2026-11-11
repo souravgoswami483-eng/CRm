@@ -102,7 +102,7 @@ export default function DashboardCharts({ monthlyIncome, paidVsPending, topClien
                 <span>Paid Received</span>
               </div>
               <div className="mt-1 font-black text-zinc-900 dark:text-zinc-100 text-sm">
-                ₹{paidVsPending.paid.toLocaleString('en-IN')}
+                ₹{(paidVsPending.paid || 0).toLocaleString('en-IN')}
               </div>
             </div>
 
@@ -112,7 +112,7 @@ export default function DashboardCharts({ monthlyIncome, paidVsPending, topClien
                 <span>Pending Due</span>
               </div>
               <div className="mt-1 font-black text-zinc-900 dark:text-zinc-100 text-sm">
-                ₹{paidVsPending.pending.toLocaleString('en-IN')}
+                ₹{(paidVsPending.pending || 0).toLocaleString('en-IN')}
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function DashboardCharts({ monthlyIncome, paidVsPending, topClien
 
         <div className="mt-4 space-y-3.5">
           {topClients.map((client, idx) => {
-            const width = Math.max(10, Math.round((client.revenue / maxClient) * 100));
+            const width = Math.max(10, Math.round(((client.revenue || 0) / (maxClient || 1)) * 100));
             return (
               <div key={client.company} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
@@ -139,7 +139,7 @@ export default function DashboardCharts({ monthlyIncome, paidVsPending, topClien
                     {idx + 1}. {client.company}
                   </span>
                   <span className="font-bold text-zinc-900 dark:text-zinc-100">
-                    ₹{client.revenue.toLocaleString('en-IN')}
+                    ₹{(client.revenue || 0).toLocaleString('en-IN')}
                   </span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">

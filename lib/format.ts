@@ -5,7 +5,14 @@
 
 export function formatRupee(amount: number | string | undefined | null): string {
   const num = typeof amount === 'string' ? parseFloat(amount) : Number(amount) || 0;
-  return `₹${Math.round(num).toLocaleString('en-IN')}`;
+  const safe = isNaN(num) ? 0 : num;
+  return `₹${Math.round(safe).toLocaleString('en-IN')}`;
+}
+
+export function formatRupeeAmount(amount: number | string | undefined | null): string {
+  const num = typeof amount === 'string' ? parseFloat(amount) : Number(amount) || 0;
+  const safe = isNaN(num) ? 0 : num;
+  return Math.round(safe).toLocaleString('en-IN');
 }
 
 export function formatIST(dateInput: string | Date | number | undefined | null): string {

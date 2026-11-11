@@ -68,12 +68,21 @@ export async function POST(request: Request) {
     const body = await request.json();
     const db = getDatabase();
 
-    // Data integrity: Reject any save with empty clientId on the server
+    // Data integrity validation on server
+    if (!body.title || typeof body.title !== 'string' || body.title.trim().length < 3) {
+      return NextResponse.json({ error: 'Project title must be at least 3 characters.' }, { status: 400 });
+    }
     if (!body.clientId || typeof body.clientId !== 'string' || body.clientId.trim() === '') {
       return NextResponse.json(
         { error: 'Client selection is required. Please select a valid client.' },
         { status: 400 }
       );
+    }
+    if (body.startDate && body.deadline && body.deadline < body.startDate) {
+      return NextResponse.json({ error: 'Deadline cannot be earlier than project start date.' }, { status: 400 });
+    }
+    if (body.quotedAmount !== undefined && (isNaN(Number(body.quotedAmount)) || Number(body.quotedAmount) < 0)) {
+      return NextResponse.json({ error: 'Quoted amount must be a valid non-negative number.' }, { status: 400 });
     }
 
     const client = db.clients.find((c) => c.id === body.clientId || c.clientId === body.clientId);

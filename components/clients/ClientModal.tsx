@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, UserPlus, Users, Sparkles } from 'lucide-react';
+import { X, Users, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Client } from '@/types';
+import { isValidEmail, isValidPhone, isValidGSTIN, isValidName } from '@/lib/validators';
 
 interface ClientModalProps {
   isOpen: boolean;
@@ -34,25 +35,100 @@ export default function ClientModal({
   );
   const [saving, setSaving] = useState(false);
 
+  // Field validation error state
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+
   if (!isOpen) return null;
+
+  const validateField = (field: string, value: string): string => {
+    switch (field) {
+      case 'name':
+        if (!isValidName(value, 2)) return 'Contact person name must be at least 2 characters.';
+        return '';
+      case 'companyName':
+        if (!isValidName(value, 2)) return 'Brand / company name must be at least 2 characters.';
+        return '';
+      case 'email':
+        if (!isValidEmail(value)) return 'Please enter a valid email address (e.g. client@company.com).';
+        return '';
+      case 'phone':
+        if (!isValidPhone(value)) {
+          return 'Please enter a valid phone number (digits only, e.g. +91 98765 43210).';
+        }
+        return '';
+      case 'whatsapp':
+        if (value && value.trim() && !isValidPhone(value)) {
+          return 'Please enter a valid WhatsApp number (digits only).';
+        }
+        return '';
+      case 'gstin':
+        if (value && value.trim() && !isValidGSTIN(value)) {
+          return 'Invalid GSTIN format (must be 15 alphanumeric characters, e.g. 29AABCT1334M1Z8).';
+        }
+        return '';
+      default:
+        return '';
+    }
+  };
+
+  const handleBlur = (field: string, value: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const errorMsg = validateField(field, value);
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }));
+  };
+
+  const handleChange = (field: string, value: string, setter: (v: string) => void) => {
+    setter(value);
+    if (touched[field]) {
+      const errorMsg = validateField(field, value);
+      setErrors((prev) => ({ ...prev, [field]: errorMsg }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Mark all as touched and run full validation
+    const newErrors: { [key: string]: string } = {
+      name: validateField('name', name),
+      companyName: validateField('companyName', companyName),
+      email: validateField('email', email),
+      phone: validateField('phone', phone),
+      whatsapp: validateField('whatsapp', whatsapp),
+      gstin: validateField('gstin', gstin),
+    };
+
+    setTouched({
+      name: true,
+      companyName: true,
+      email: true,
+      phone: true,
+      whatsapp: true,
+      gstin: true,
+    });
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((msg) => !!msg);
+    if (hasErrors) {
+      return;
+    }
+
     setSaving(true);
     try {
       await onSave({
-        name,
-        companyName,
-        email,
-        phone,
-        whatsapp,
-        address,
-        gstin,
+        name: name.trim(),
+        companyName: companyName.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        whatsapp: (whatsapp || phone).trim(),
+        address: address.trim(),
+        gstin: gstin.trim().toUpperCase(),
         industry,
         source,
-        notes,
+        notes: notes.trim(),
         tags: [tag],
-        logo,
+        logo: logo.trim(),
       });
       onClose();
     } catch (err) {
@@ -89,7 +165,7 @@ export default function ClientModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
@@ -99,10 +175,20 @@ export default function ClientModal({
                 type="text"
                 placeholder="e.g. Alex Rivers"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => handleChange('name', e.target.value, setName)}
+                onBlur={(e) => handleBlur('name', e.target.value)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.name && errors.name
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.name && errors.name && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.name}
+                </p>
+              )}
             </div>
 
             <div>
@@ -113,10 +199,20 @@ export default function ClientModal({
                 type="text"
                 placeholder="e.g. Zenith Techworks"
                 value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => handleChange('companyName', e.target.value, setCompanyName)}
+                onBlur={(e) => handleBlur('companyName', e.target.value)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.companyName && errors.companyName
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.companyName && errors.companyName && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.companyName}
+                </p>
+              )}
             </div>
           </div>
 
@@ -129,10 +225,20 @@ export default function ClientModal({
                 type="email"
                 placeholder="client@company.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => handleChange('email', e.target.value, setEmail)}
+                onBlur={(e) => handleBlur('email', e.target.value)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.email && errors.email
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.email && errors.email && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -144,12 +250,26 @@ export default function ClientModal({
                 placeholder="+91 98765 43210"
                 value={phone}
                 onChange={(e) => {
-                  setPhone(e.target.value);
+                  handleChange('phone', e.target.value, setPhone);
                   if (!whatsapp) setWhatsapp(e.target.value);
                 }}
-                required
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onBlur={(e) => handleBlur('phone', e.target.value)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none transition-all ${
+                  touched.phone && errors.phone
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.phone && errors.phone ? (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.phone}
+                </p>
+              ) : (
+                <p className="mt-1 text-[10px] text-zinc-500 dark:text-zinc-400">
+                  Include country code for Indian/international clients (e.g. +91 98765 43210)
+                </p>
+              )}
             </div>
           </div>
 
@@ -208,11 +328,22 @@ export default function ClientModal({
               </label>
               <input
                 type="text"
-                placeholder="GSTIN (e.g. 27AABCV1234F1Z5)"
+                placeholder="GSTIN (e.g. 29AABCT1334M1Z8)"
                 value={gstin}
-                onChange={(e) => setGstin(e.target.value)}
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-violet-500"
+                onChange={(e) => handleChange('gstin', e.target.value, setGstin)}
+                onBlur={(e) => handleBlur('gstin', e.target.value)}
+                className={`w-full rounded-xl border px-3 py-2 text-xs text-zinc-900 dark:text-white uppercase outline-none transition-all ${
+                  touched.gstin && errors.gstin
+                    ? 'border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500'
+                    : 'border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 focus:border-violet-500'
+                }`}
               />
+              {touched.gstin && errors.gstin && (
+                <p className="mt-1 text-[11px] font-medium text-rose-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3 inline shrink-0" />
+                  {errors.gstin}
+                </p>
+              )}
             </div>
 
             <div>

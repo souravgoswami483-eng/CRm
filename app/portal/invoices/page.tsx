@@ -30,6 +30,7 @@ export default function ClientInvoicesPage() {
   const [paymentNotes, setPaymentNotes] = useState<string>('');
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentSuccessReceipt, setPaymentSuccessReceipt] = useState<Payment | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -66,15 +67,35 @@ export default function ClientInvoicesPage() {
 
   const openPayModal = (inv: Invoice) => {
     setSelectedInvoiceForPayment(inv);
-    setPayingAmount(inv.balanceDue);
+    setPayingAmount(inv.balanceDue || inv.total || 0);
     setTransactionRef(`UPI/UTR/${Date.now().toString().slice(-8)}`);
     setPaymentNotes('');
     setPaymentSuccessReceipt(null);
+    setPaymentError(null);
   };
 
   const handleSimulatePayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedInvoiceForPayment || payingAmount <= 0) return;
+    setPaymentError(null);
+    if (!selectedInvoiceForPayment) return;
+
+    const amt = Number(payingAmount);
+    if (!amt || isNaN(amt) || amt <= 0) {
+      setPaymentError('Please enter a valid payment amount greater than ₹0.');
+      return;
+    }
+
+    const maxAllowed = selectedInvoiceForPayment.balanceDue || selectedInvoiceForPayment.total || 0;
+    if (amt > maxAllowed) {
+      setPaymentError(`Payment amount cannot exceed the pending balance of ₹${maxAllowed.toLocaleString('en-IN')}.`);
+      return;
+    }
+
+    if (!transactionRef || transactionRef.trim().length < 3) {
+      setPaymentError('Please enter a valid Transaction / UTR reference (at least 3 characters).');
+      return;
+    }
+
     setPaymentProcessing(true);
 
     try {
@@ -83,10 +104,10 @@ export default function ClientInvoicesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           invoiceId: selectedInvoiceForPayment.id,
-          amount: payingAmount,
+          amount: amt,
           mode: paymentMode,
-          transactionRef: transactionRef.trim() || `REF-${Date.now().toString().slice(-8)}`,
-          notes: paymentNotes.trim() || `Client payment submission of ₹${payingAmount}`,
+          transactionRef: transactionRef.trim(),
+          notes: paymentNotes.trim() || `Client payment submission of ₹${amt}`,
           recordedBy: user?.id,
           recordedByName: user?.name,
           recordedByRole: 'CLIENT',
@@ -97,9 +118,13 @@ export default function ClientInvoicesPage() {
         const data = await res.json();
         setPaymentSuccessReceipt(data.payment);
         loadData();
+      } else {
+        const errData = await res.json();
+        setPaymentError(errData.error || 'Failed to submit payment request.');
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setPaymentError(e.message || 'An unexpected network error occurred.');
     } finally {
       setPaymentProcessing(false);
     }
@@ -124,15 +149,15 @@ export default function ClientInvoicesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 shadow-sm backdrop-blur transition-colors">
           <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Total Invoiced</span>
-          <div className="mt-2 text-2xl font-black text-zinc-900 dark:text-white">₹{totalBilled.toLocaleString('en-IN')}</div>
+          <div className="mt-2 text-2xl font-black text-zinc-900 dark:text-white">₹{(totalBilled || 0).toLocaleString('en-IN')}</div>
         </div>
         <div className="rounded-2xl border border-emerald-500/30 bg-emerald-50/60 dark:bg-emerald-950/20 p-5 shadow-sm backdrop-blur transition-colors">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Settled to Date</span>
-          <div className="mt-2 text-2xl font-black text-emerald-700 dark:text-emerald-300">₹{totalPaid.toLocaleString('en-IN')}</div>
+          <div className="mt-2 text-2xl font-black text-emerald-700 dark:text-emerald-300">₹{(totalPaid || 0).toLocaleString('en-IN')}</div>
         </div>
         <div className="rounded-2xl border border-amber-500/30 bg-amber-50/60 dark:bg-amber-950/20 p-5 shadow-sm backdrop-blur transition-colors">
           <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Current Balance Due</span>
-          <div className="mt-2 text-2xl font-black text-amber-700 dark:text-amber-300">₹{balanceDue.toLocaleString('en-IN')}</div>
+          <div className="mt-2 text-2xl font-black text-amber-700 dark:text-amber-300">₹{(balanceDue || 0).toLocaleString('en-IN')}</div>
         </div>
       </div>
 
@@ -172,10 +197,10 @@ export default function ClientInvoicesPage() {
                     <td className="py-3.5 px-4 text-zinc-700 dark:text-zinc-300">{inv.date}</td>
                     <td className="py-3.5 px-4 font-mono text-zinc-500 dark:text-zinc-400">{inv.dueDate}</td>
                     <td className="py-3.5 px-4 font-extrabold text-zinc-900 dark:text-zinc-100">
-                      ₹{inv.total.toLocaleString('en-IN')}
+                      ₹{(inv.total || 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 px-4 font-bold text-amber-600 dark:text-amber-400">
-                      <div>₹{inv.balanceDue.toLocaleString('en-IN')}</div>
+                      <div>₹{(inv.balanceDue || 0).toLocaleString('en-IN')}</div>
                       {hasPendingVerification && (
                         <div className="inline-flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
                           <Clock className="h-3 w-3" />
@@ -184,17 +209,24 @@ export default function ClientInvoicesPage() {
                       )}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                          inv.status === 'Paid'
-                            ? 'bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-300'
-                            : inv.status === 'Overdue'
-                            ? 'bg-rose-100 dark:bg-rose-950 border border-rose-300 dark:border-rose-500/60 text-rose-800 dark:text-rose-300'
-                            : 'bg-cyan-100 dark:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/40 text-cyan-800 dark:text-cyan-300'
-                        }`}
-                      >
-                        {inv.status}
-                      </span>
+                      {(() => {
+                        const todayStr = new Date().toISOString().substring(0, 10);
+                        const isOverdue = inv.status === 'Overdue' || (inv.dueDate && inv.dueDate < todayStr && (inv.balanceDue || 0) > 0 && inv.status !== 'Paid' && inv.status !== 'Draft' && inv.status !== 'Cancelled');
+                        const displayStatus = isOverdue ? 'Overdue' : inv.status;
+                        return (
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                              displayStatus === 'Paid'
+                                ? 'bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-300'
+                                : displayStatus === 'Overdue'
+                                ? 'bg-rose-100 dark:bg-rose-950 border border-rose-300 dark:border-rose-500/60 text-rose-800 dark:text-rose-300 animate-pulse'
+                                : 'bg-cyan-100 dark:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/40 text-cyan-800 dark:text-cyan-300'
+                            }`}
+                          >
+                            {displayStatus}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -268,7 +300,7 @@ export default function ClientInvoicesPage() {
                       <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">{p.mode}</td>
                       <td className="py-3 px-4 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{p.transactionRef}</td>
                       <td className="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400">
-                        ₹{p.amount.toLocaleString('en-IN')}
+                        ₹{(p.amount || 0).toLocaleString('en-IN')}
                       </td>
                       <td className="py-3 px-4">
                         {isPending ? (
@@ -326,7 +358,7 @@ export default function ClientInvoicesPage() {
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                   Your payment submission of{' '}
                   <strong className="text-zinc-900 dark:text-white">
-                    ₹{paymentSuccessReceipt.amount.toLocaleString('en-IN')}
+                    ₹{(paymentSuccessReceipt.amount || 0).toLocaleString('en-IN')}
                   </strong>{' '}
                   for <strong>{paymentSuccessReceipt.invoiceNumber}</strong> has been submitted with reference{' '}
                   <span className="font-mono font-bold text-violet-600 dark:text-violet-400">
@@ -355,7 +387,7 @@ export default function ClientInvoicesPage() {
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSimulatePayment} className="space-y-4">
+              <form onSubmit={handleSimulatePayment} noValidate className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -370,6 +402,13 @@ export default function ClientInvoicesPage() {
                   </button>
                 </div>
 
+                {paymentError && (
+                  <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <span>{paymentError}</span>
+                  </div>
+                )}
+
                 <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-3 text-xs space-y-1">
                   <div className="flex justify-between">
                     <span className="text-zinc-500">Invoice:</span>
@@ -377,11 +416,11 @@ export default function ClientInvoicesPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-zinc-500">Total Invoice Amount:</span>
-                    <span className="font-bold text-zinc-900 dark:text-white">₹{selectedInvoiceForPayment.total.toLocaleString('en-IN')}</span>
+                    <span className="font-bold text-zinc-900 dark:text-white">₹{(selectedInvoiceForPayment.total || 0).toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-zinc-500">Current Balance Due:</span>
-                    <span className="font-bold text-amber-600 dark:text-amber-400">₹{selectedInvoiceForPayment.balanceDue.toLocaleString('en-IN')}</span>
+                    <span className="font-bold text-amber-600 dark:text-amber-400">₹{(selectedInvoiceForPayment.balanceDue || 0).toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
@@ -392,7 +431,7 @@ export default function ClientInvoicesPage() {
                       Amount You Are Paying (INR ₹) *
                     </label>
                     <span className="text-[11px] text-zinc-500">
-                      Balance: ₹{selectedInvoiceForPayment.balanceDue.toLocaleString('en-IN')}
+                      Balance: ₹{(selectedInvoiceForPayment.balanceDue || 0).toLocaleString('en-IN')}
                     </span>
                   </div>
                   <input
@@ -471,7 +510,7 @@ export default function ClientInvoicesPage() {
                     disabled={paymentProcessing}
                     className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-bold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-500 disabled:opacity-50 flex items-center gap-1.5"
                   >
-                    <span>{paymentProcessing ? 'Submitting Request...' : `Submit Payment of ₹${payingAmount.toLocaleString('en-IN')}`}</span>
+                    <span>{paymentProcessing ? 'Submitting Request...' : `Submit Payment of ₹${(Number(payingAmount) || 0).toLocaleString('en-IN')}`}</span>
                   </button>
                 </div>
               </form>

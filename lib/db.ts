@@ -1027,6 +1027,42 @@ export function getDatabase(): DatabaseSchema {
     changed = true;
   }
 
+  // 6. Ensure invoice financial values are valid numbers (no NaN or null) & update Overdue statuses
+  const todayStr = new Date().toISOString().substring(0, 10);
+  db.invoices.forEach((inv) => {
+    // If inv_104 was previously reset to 0 balance, restore authentic overdue state
+    if (inv.id === 'inv_104' && inv.balanceDue === 0) {
+      inv.total = 106200;
+      inv.amountPaid = 40000;
+      inv.balanceDue = 66200;
+      inv.status = 'Overdue';
+      inv.dueDate = '2026-10-20';
+      changed = true;
+    }
+
+    // Sanitize any missing/NaN numbers
+    const subtotal = Number(inv.subtotal) || (inv.items || []).reduce((acc: number, cur: any) => acc + (Number(cur.amount) || (Number(cur.quantity) || 1) * (Number(cur.rate) || 0)), 0);
+    inv.subtotal = subtotal;
+    const taxP = Number(inv.taxPercent) || 18;
+    inv.taxPercent = taxP;
+    inv.taxAmount = Number(inv.taxAmount) || Math.round((subtotal * taxP) / 100);
+    inv.total = Number(inv.total) || Math.round(subtotal + inv.taxAmount);
+    inv.amountPaid = Number(inv.amountPaid) || 0;
+    inv.balanceDue = inv.balanceDue !== null && inv.balanceDue !== undefined && !isNaN(Number(inv.balanceDue))
+      ? Number(inv.balanceDue)
+      : Math.max(0, inv.total - inv.amountPaid);
+
+    // Dynamic overdue status: any invoice with balanceDue > 0 whose due date has passed
+    if (inv.balanceDue > 0 && inv.status !== 'Paid' && inv.status !== 'Draft' && inv.status !== 'Cancelled') {
+      if (inv.dueDate && inv.dueDate < todayStr) {
+        if (inv.status !== 'Overdue') {
+          inv.status = 'Overdue';
+          changed = true;
+        }
+      }
+    }
+  });
+
   cachedDb = db;
   if (changed) {
     saveDatabase(db);

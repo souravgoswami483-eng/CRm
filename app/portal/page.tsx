@@ -157,7 +157,7 @@ export default function ClientPortalHome() {
             Total Billed
           </span>
           <div className="mt-2 text-2xl font-black text-zinc-900 dark:text-zinc-100">
-            ₹{totalBilled.toLocaleString('en-IN')}
+            ₹{(totalBilled || 0).toLocaleString('en-IN')}
           </div>
           <p className="mt-1 text-[11px] text-zinc-500">All invoices generated</p>
         </div>
@@ -167,7 +167,7 @@ export default function ClientPortalHome() {
             Total Paid
           </span>
           <div className="mt-2 text-2xl font-black text-emerald-700 dark:text-emerald-300">
-            ₹{totalPaid.toLocaleString('en-IN')}
+            ₹{(totalPaid || 0).toLocaleString('en-IN')}
           </div>
           <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">Cleared settlements</p>
         </div>
@@ -177,7 +177,7 @@ export default function ClientPortalHome() {
             Balance Due
           </span>
           <div className="mt-2 text-2xl font-black text-amber-700 dark:text-amber-300">
-            ₹{balanceDue.toLocaleString('en-IN')}
+            ₹{(balanceDue || 0).toLocaleString('en-IN')}
           </div>
           <p className="mt-1 text-[11px] text-amber-600/80 dark:text-amber-400/80">Pending settlement</p>
         </div>
