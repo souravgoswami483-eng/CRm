@@ -198,6 +198,13 @@ export async function POST(request: Request) {
 
     if (newBalanceDue === 0) {
       invoice.status = 'Paid';
+      // Unlock files automatically when linked invoice is Paid (Task 2 rule)
+      db.files.forEach((f) => {
+        if ((invoice.projectId && f.projectId === invoice.projectId) || f.clientId === invoice.clientId) {
+          f.downloadAllowed = true;
+          f.isWatermarked = false;
+        }
+      });
     } else if (newAmountPaid > 0) {
       invoice.status = 'Partially Paid';
     }

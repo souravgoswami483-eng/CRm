@@ -69,16 +69,17 @@ export default function AdminDashboardPage() {
     loadDashboardData();
   }, []);
 
-  // Compute Financial stats
-  const totalRevenueAllTime = payments.reduce((acc, p) => acc + (p.amount || 0), 0);
+  // Compute Financial stats - Count ONLY payments with status Cleared (Completed) (Task 2 rule)
+  const clearedPayments = payments.filter((p) => p.status === 'Completed');
+  const totalRevenueAllTime = clearedPayments.reduce((acc, p) => acc + (p.amount || 0), 0);
   const currentMonth = new Date().toISOString().substring(0, 7);
   const currentYear = new Date().getFullYear().toString();
 
-  const totalRevenueThisMonth = payments
+  const totalRevenueThisMonth = clearedPayments
     .filter((p) => p.date?.startsWith(currentMonth))
     .reduce((acc, p) => acc + (p.amount || 0), 0);
 
-  const totalRevenueThisYear = payments
+  const totalRevenueThisYear = clearedPayments
     .filter((p) => p.date?.startsWith(currentYear))
     .reduce((acc, p) => acc + (p.amount || 0), 0);
 
@@ -116,9 +117,9 @@ export default function AdminDashboardPage() {
     { month: 'Nov', amount: 80000 },
   ];
 
-  // Top clients by revenue
+  // Top clients by revenue (Cleared payments only)
   const clientRevenueMap: Record<string, { name: string; company: string; revenue: number }> = {};
-  payments.forEach((p) => {
+  clearedPayments.forEach((p) => {
     if (!clientRevenueMap[p.clientId]) {
       clientRevenueMap[p.clientId] = {
         name: p.clientName,
@@ -166,10 +167,22 @@ export default function AdminDashboardPage() {
 
         <QuickActions
           onNewClient={() => setIsClientModalOpen(true)}
-          onNewProject={() => setIsProjectModalOpen(true)}
-          onUploadFile={() => setIsFileModalOpen(true)}
-          onCreateInvoice={() => setIsInvoiceModalOpen(true)}
-          onRecordPayment={() => setIsPaymentModalOpen(true)}
+          onNewProject={() => {
+            loadDashboardData();
+            setIsProjectModalOpen(true);
+          }}
+          onUploadFile={() => {
+            loadDashboardData();
+            setIsFileModalOpen(true);
+          }}
+          onCreateInvoice={() => {
+            loadDashboardData();
+            setIsInvoiceModalOpen(true);
+          }}
+          onRecordPayment={() => {
+            loadDashboardData();
+            setIsPaymentModalOpen(true);
+          }}
         />
       </div>
 
