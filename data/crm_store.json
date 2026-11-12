@@ -41,9 +41,42 @@
       "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
       "mustChangePassword": false,
       "passwordHash": "pbkdf2:806d4f9f18c771ea8bb92ff05f049803:b0b3a8b2c27fce79dce91f3d46b226e0e93b32817cdd5e013f78209bb3f681da"
+    },
+    {
+      "id": "user_client_1794466293224",
+      "role": "CLIENT",
+      "name": "Rohan Verma",
+      "email": "rohan_1794466293182@alphacorp.in",
+      "clientId": "CL-2026-1276",
+      "companyName": "Alpha Corp 3182",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "mustChangePassword": true,
+      "passwordHash": "pbkdf2:499df2814b8fcd5e0ded5b29d349ae48:394105a36453b60ba76b1570bea052e0fb1aa957c0058b87508dc6957ed0fedd"
     }
   ],
   "clients": [
+    {
+      "id": "client_1794466293224",
+      "clientId": "CL-2026-1276",
+      "name": "Rohan Verma",
+      "companyName": "Alpha Corp 3182",
+      "logo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "email": "rohan_1794466293182@alphacorp.in",
+      "phone": "+91 98111 22334",
+      "whatsapp": "+91 98111 22334",
+      "address": "",
+      "gstin": "",
+      "industry": "Fintech",
+      "source": "Direct",
+      "notes": "",
+      "tags": [
+        "One-time"
+      ],
+      "dateAdded": "2026-11-12",
+      "status": "Active",
+      "passwordHash": "pbkdf2:499df2814b8fcd5e0ded5b29d349ae48:394105a36453b60ba76b1570bea052e0fb1aa957c0058b87508dc6957ed0fedd",
+      "mustChangePassword": true
+    },
     {
       "id": "client_1794340183382",
       "clientId": "CL-2026-3745",
@@ -84,7 +117,7 @@
         "VIP"
       ],
       "dateAdded": "2026-01-15",
-      "lastLogin": "2026-11-11 06:53",
+      "lastLogin": "2026-11-12 06:51",
       "status": "Active",
       "passwordHash": "pbkdf2:2daa7b8a6829d3f8ff8d59482e7572d1:029379c2166cb11d0c98c0d2bfdd029c6c671072173c254ffc3ded6a0f701a5b"
     },
@@ -156,6 +189,49 @@
     }
   ],
   "projects": [
+    {
+      "id": "proj_1794466293240",
+      "title": "Brand Explainer Video 3D",
+      "clientId": "client_1794466293224",
+      "clientName": "Rohan Verma",
+      "clientCompany": "Alpha Corp 3182",
+      "type": "Motion Graphics",
+      "description": "",
+      "referenceLinks": [],
+      "referenceFiles": [],
+      "startDate": "2026-11-12",
+      "deadline": "",
+      "status": "Brief Received",
+      "priority": "High",
+      "revisionsAllowed": 3,
+      "revisionsUsed": 0,
+      "quotedAmount": 75000,
+      "currency": "INR",
+      "tasks": [
+        {
+          "id": "t_1794466293240_1",
+          "title": "Creative brief review & references",
+          "completed": false
+        },
+        {
+          "id": "t_1794466293240_2",
+          "title": "Draft v1 concept render",
+          "completed": false
+        },
+        {
+          "id": "t_1794466293240_3",
+          "title": "Client revision integration",
+          "completed": false
+        },
+        {
+          "id": "t_1794466293240_4",
+          "title": "Final delivery & source files",
+          "completed": false
+        }
+      ],
+      "createdAt": "2026-11-12T06:51:33.240Z",
+      "updatedAt": "2026-11-12T06:51:33.240Z"
+    },
     {
       "id": "proj_1",
       "title": "SaaS Platform 2.0 Product Launch Video",
@@ -527,6 +603,54 @@
   ],
   "invoices": [
     {
+      "id": "inv_1794466293254",
+      "invoiceNumber": "INV-2026-0111",
+      "isEstimate": false,
+      "clientId": "client_1794466293224",
+      "clientName": "Rohan Verma",
+      "clientCompany": "Alpha Corp 3182",
+      "clientEmail": "rohan_1794466293182@alphacorp.in",
+      "projectId": "proj_1794466293240",
+      "date": "2026-11-12",
+      "dueDate": "2026-11-27",
+      "paymentTerms": "Net 15 Days",
+      "currency": "INR",
+      "items": [
+        {
+          "id": "item_1794466293254_0",
+          "service": "3D Motion Graphics Production",
+          "description": "",
+          "quantity": 1,
+          "rate": 75000,
+          "amount": 75000
+        }
+      ],
+      "subtotal": 75000,
+      "discountType": "flat",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "GST (18%)",
+      "taxPercent": 18,
+      "taxAmount": 13500,
+      "total": 88500,
+      "amountPaid": 0,
+      "balanceDue": 88500,
+      "status": "Draft",
+      "notes": "Thank you for choosing Vortex Creative Labs for your visual branding needs.",
+      "terms": "Payment is requested within the due date via UPI or Bank Transfer.",
+      "bankDetails": {
+        "accountName": "Vortex Creative Labs",
+        "accountNumber": "50200067891234",
+        "bankName": "HDFC Bank Ltd",
+        "ifsc": "HDFC0000240",
+        "branch": "Indiranagar Branch, Bengaluru",
+        "upiId": "sourav.vortex@okhdfcbank"
+      },
+      "isRecurring": false,
+      "recurringInterval": "Monthly",
+      "createdAt": "2026-11-12T06:51:33.254Z"
+    },
+    {
       "id": "inv_1794376078989",
       "invoiceNumber": "INV-2026-0109",
       "isEstimate": false,
@@ -682,7 +806,7 @@
       "total": 112100,
       "amountPaid": 0,
       "balanceDue": 112100,
-      "status": "Sent",
+      "status": "Overdue",
       "notes": "Please quote invoice number INV-2026-0106 on bank transfer or UPI.",
       "terms": "Payment due on or before 11 November 2026.",
       "bankDetails": {
@@ -960,6 +1084,26 @@
   ],
   "notifications": [
     {
+      "recipientId": "client_1794466293224",
+      "title": "New Project Started",
+      "message": "Your project \"Brand Explainer Video 3D\" is now underway.",
+      "type": "system",
+      "link": "/portal/projects",
+      "id": "notif_1794466293244_56c1",
+      "read": false,
+      "createdAt": "2026-11-12T06:51:33.244Z"
+    },
+    {
+      "recipientId": "ADMIN",
+      "title": "New Client Onboarded",
+      "message": "Rohan Verma (Alpha Corp 3182) was onboarded with ID CL-2026-1276",
+      "type": "system",
+      "link": "/admin/clients",
+      "id": "notif_1794466293228_xhaf",
+      "read": false,
+      "createdAt": "2026-11-12T06:51:33.228Z"
+    },
+    {
       "recipientId": "client_1794380026687",
       "title": "New Project Started",
       "message": "Your project \"Brand Explainer Video 3D\" is now underway.",
@@ -1191,6 +1335,57 @@
     }
   ],
   "activities": [
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Invoice Created",
+      "details": "Generated INV-2026-0111 for Alpha Corp 3182 - Total: ₹88,500",
+      "clientId": "client_1794466293224",
+      "projectId": "proj_1794466293240",
+      "id": "act_1794466293283_a5hs",
+      "timestamp": "2026-11-12 06:51:33"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Project Created",
+      "details": "Created project \"Brand Explainer Video 3D\" for Alpha Corp 3182",
+      "clientId": "client_1794466293224",
+      "projectId": "proj_1794466293240",
+      "id": "act_1794466293242_r1y2",
+      "timestamp": "2026-11-12 06:51:33"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Client Created",
+      "details": "Created new client: Rohan Verma (Alpha Corp 3182) with ID CL-2026-1276",
+      "clientId": "client_1794466293224",
+      "id": "act_1794466293227_xg1q",
+      "timestamp": "2026-11-12 06:51:33"
+    },
+    {
+      "userId": "client_1",
+      "userName": "Alex Rivers",
+      "userRole": "CLIENT",
+      "action": "Client Logged In",
+      "details": "Alex Rivers (Zenith Techworks) authenticated into Client Portal",
+      "clientId": "client_1",
+      "id": "act_1794466293050_w7io",
+      "timestamp": "2026-11-12 06:51:33"
+    },
+    {
+      "userId": "user_admin",
+      "userName": "Sourav Roy (Creative Director)",
+      "userRole": "ADMIN",
+      "action": "Admin Logged In",
+      "details": "Admin authenticated into Creative Studio CRM dashboard",
+      "id": "act_1794466293004_czhn",
+      "timestamp": "2026-11-12 06:51:33"
+    },
     {
       "userId": "user_admin",
       "userName": "Sourav Roy (Creative Director)",
@@ -1704,7 +1899,7 @@
       "branch": "Indiranagar Branch, Bengaluru"
     },
     "invoicePrefix": "INV-2026-",
-    "invoiceNextNumber": 111,
+    "invoiceNextNumber": 112,
     "defaultPaymentTerms": "Net 15 Days",
     "defaultTaxRate": 18,
     "twoFactorEnabled": false,

@@ -359,7 +359,8 @@ export default function PaymentsPage() {
 
       {/* Payment History Table */}
       <div className="overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm dark:shadow-2xl backdrop-blur">
-        <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs min-w-[720px]">
           <thead className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-950/80 text-[11px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
             <tr>
               <th className="py-3 px-4">Date &amp; Time</th>
@@ -459,6 +460,7 @@ export default function PaymentsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* RECORD DIRECT PAYMENT MODAL */}

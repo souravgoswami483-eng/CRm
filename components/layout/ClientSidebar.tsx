@@ -30,7 +30,7 @@ export default function ClientSidebar() {
   const { user } = useAuth();
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/90 backdrop-blur min-h-[calc(100vh-4rem)] p-4 flex flex-col justify-between transition-colors duration-200">
+    <aside className="hidden lg:flex w-64 flex-shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/90 backdrop-blur min-h-[calc(100vh-4rem)] p-4 flex-col justify-between transition-colors duration-200">
       <div>
         {/* Client ID Card Header */}
         <div className="mb-6 p-3.5 rounded-2xl bg-gradient-to-br from-cyan-50 via-zinc-50 to-white dark:from-cyan-950/40 dark:via-zinc-900 dark:to-zinc-950 border border-cyan-200 dark:border-cyan-500/20">

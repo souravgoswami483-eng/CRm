@@ -126,7 +126,8 @@ export default function AdminActivityPage() {
 
       {/* Audit Log Table */}
       <div className="overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur shadow-sm dark:shadow-2xl">
-        <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs min-w-[640px]">
           <thead className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-950/80 text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
             <tr>
               <th className="py-3 px-4">Timestamp</th>
@@ -183,6 +184,7 @@ export default function AdminActivityPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
